@@ -96,8 +96,14 @@ serão substituídos pelos resultados de MD (`results/md/<liga>/gamma_md.csv`).*
 | Al-0,8Si-0,6Mg-0,2Fe (Marques et al. 2025) | 7902,38 K/m | 7,637×10⁻⁷ | 1,5745×10⁻⁶ | 3,98 μm | 0,7908 K |
 
 <p align="center">
-  <img src="results/sdas/sdas_Al3Cu5Nb01Fe.png" width="520" alt="SDAS × tempo local de solidificação, modelos MRB e RB contra dados experimentais">
+  <img src="results/sdas/sdas_Al3Cu5Nb01Fe.png" width="430" alt="SDAS × tempo local de solidificação da liga Al-3Cu-5Nb-0,1Fe: modelos MRB e RB contra Mendes et al. (2023)">
+  <img src="results/sdas/sdas_Al08Si06Mg02Fe.png" width="430" alt="SDAS × tempo local de solidificação da liga Al-0,8Si-0,6Mg-0,2Fe: modelos MRB e RB contra Marques et al. (2025)">
 </p>
+
+*SDAS × tempo local de solidificação t_SL. À esquerda, Al-3Cu-5Nb-0,1Fe (Mendes et al. 2023); à direita,
+Al-0,8Si-0,6Mg-0,2Fe (Marques et al. 2025). Nas duas ligas o modelo MRB, com Γ¹ˢᵗ ou Γ²ⁿᵈ, fica dentro da dispersão
+experimental, e o RB superestima o SDAS. Ajustes MRB: 7,67·t^0,377 e 9,38·t^0,379 μm (Al-Cu-Nb-Fe); 5,81·t^0,387 e
+6,71·t^0,387 μm (Al-Si-Mg-Fe). Métricas em [`results/sdas/report_sdas.md`](results/sdas/report_sdas.md).*
 
 ### CALPHAD
 
