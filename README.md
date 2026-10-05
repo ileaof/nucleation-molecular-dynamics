@@ -38,20 +38,20 @@ termodinâmicas das ligas.
 Formulação de Ferreira (2024) na forma da apresentação no MRS Meeting 2026
 ([`Continuum_Mechanics_Solution/Paper_and_presentation/`](Continuum_Mechanics_Solution/Paper_and_presentation), slides 4–11).
 
-**Notação.** $\mathbf{T}$ (negrito) é o **campo térmico**, em K, e $\nabla\mathbf{T}$ o seu gradiente. $T$ (sem negrito) é
-a temperatura e $\Delta T$ o sub-resfriamento. $\boldsymbol{\Gamma}$ é o tensor de campo térmico e $\mathbf{A}$ a área da
-nova superfície, normal ao campo $\mathbf{T}$.
+**Notação.** $`\mathbf{T}`$ (negrito) é o **campo térmico**, em K, e $`\nabla\mathbf{T}`$ o seu gradiente. $`T`$ (sem negrito) é
+a temperatura e $`\Delta T`$ o sub-resfriamento. $`\boldsymbol{\Gamma}`$ é o tensor de campo térmico e $`\mathbf{A}`$ a área da
+nova superfície, normal ao campo $`\mathbf{T}`$.
 
 ### 1. Campo térmico a partir da 1ª lei
 
-Pela 1ª lei, a energia $E$ é função de ponto, e $Q$ e $W$ dependem do caminho:
+Pela 1ª lei, a energia $`E`$ é função de ponto, e $`Q`$ e $`W`$ dependem do caminho:
 
 ```math
 \delta Q - \delta W = dE
 ```
 
-Tomando $dE \equiv \partial E_{,i}$ em relação à variável primitiva $T$, a 1ª lei escreve-se como
-$\nabla\left[\frac{\partial T}{\delta Q}(Q-W)\right] = \nabla\left[\frac{\partial T}{\delta Q}E\right]$, o que define dois
+Tomando $`dE \equiv \partial E_{,i}`$ em relação à variável primitiva $`T`$, a 1ª lei escreve-se como
+$`\nabla\left[\frac{\partial T}{\delta Q}(Q-W)\right] = \nabla\left[\frac{\partial T}{\delta Q}E\right]`$, o que define dois
 gradientes de campo térmico:
 
 ```math
@@ -66,8 +66,8 @@ gradientes de campo térmico:
 \qquad\text{(dependente do caminho)}
 ```
 
-Como $E$ e $W$ são variáveis independentes, os termos cruzados $\nabla\left[\frac{\partial T}{\delta W}E\right]$ e
-$\nabla\left[\frac{\partial T}{\partial E}W\right]$ podem ser desprezados, e o campo de Ferreira (2024) fica
+Como $`E`$ e $`W`$ são variáveis independentes, os termos cruzados $`\nabla\left[\frac{\partial T}{\delta W}E\right]`$ e
+$`\nabla\left[\frac{\partial T}{\partial E}W\right]`$ podem ser desprezados, e o campo de Ferreira (2024) fica
 
 ```math
 \nabla\mathbf{T} = \nabla\left[\frac{\partial T}{\delta Q}\,(E+W)\right]
@@ -76,8 +76,8 @@ $\nabla\left[\frac{\partial T}{\partial E}W\right]$ podem ser desprezados, e o c
 
 ### 2. Energia aberta em suas formas
 
-Com $E = U + K + E_P + \Sigma_{other}$ (simetria de Emmy Noether) e
-$\delta Q - \delta W = dE = dU + dK + dE_P + d\Sigma_{other}$, sendo $U = f(T, V, P, n_1 \ldots n_N)$,
+Com $`E = U + K + E_P + \Sigma_{other}`$ (simetria de Emmy Noether) e
+$`\delta Q - \delta W = dE = dU + dK + dE_P + d\Sigma_{other}`$, sendo $`U = f(T, V, P, n_1 \ldots n_N)`$,
 
 ```math
 dU = \frac{\partial U}{\partial T}\,dT + \frac{\partial U}{\partial V}\,dV + \frac{\partial U}{\partial P}\,dP
@@ -103,7 +103,7 @@ mais as energias cinética e potencial, outras formas de energia e o trabalho:
 
 ### 3. Tensor de campo térmico
 
-Toda nova superfície criada ou deformada, de área $\mathbf{A}$, é normal ao campo térmico $\mathbf{T}$:
+Toda nova superfície criada ou deformada, de área $`\mathbf{A}`$, é normal ao campo térmico $`\mathbf{T}`$:
 
 ```math
 \boldsymbol{\Gamma} = \mathbf{A}\cdot\nabla\mathbf{T} = \mathbf{A}\cdot\nabla\mathbf{T}_{\mathrm{pi}}
@@ -112,8 +112,8 @@ Toda nova superfície criada ou deformada, de área $\mathbf{A}$, é normal ao c
 
 ### 4. Nucleação
 
-Energia livre total do núcleo, em termos das energias livres de volume $\Delta G_V = \Delta S_V\,\Delta T$ e de superfície
-$\Delta G_S = \gamma_{SL}$, com $\Delta S_V$, $\Delta T$, $\gamma_{SL}$ e $\theta$ funções do raio:
+Energia livre total do núcleo, em termos das energias livres de volume $`\Delta G_V = \Delta S_V\,\Delta T`$ e de superfície
+$`\Delta G_S = \gamma_{SL}`$, com $`\Delta S_V`$, $`\Delta T`$, $`\gamma_{SL}`$ e $`\theta`$ funções do raio:
 
 ```math
 \Delta G = \left(\frac{1}{3}\pi r_C^3\,\Delta S_V\,\Delta T + \pi r_C^2\,\gamma_{SL}\right) f(\theta)
@@ -121,7 +121,7 @@ $\Delta G_S = \gamma_{SL}$, com $\Delta S_V$, $\Delta T$, $\gamma_{SL}$ e $\thet
 \qquad f(\theta) = 2 - 3\cos\theta + \cos^3\theta
 ```
 
-O máximo em relação a $r_C$ dá a equação parabólica
+O máximo em relação a $`r_C`$ dá a equação parabólica
 
 ```math
 \left[\left(\frac{\partial \Delta S_V}{\partial r}\Delta T + \Delta S_V\frac{\partial \Delta T}{\partial r}\right) f(\theta)
@@ -130,8 +130,8 @@ O máximo em relação a $r_C$ dá a equação parabólica
 + \gamma_{SL}\frac{\partial f(\theta)}{\partial r}\right] r_C + 6\gamma_{SL}\, f(\theta) = 0
 ```
 
-**Raio crítico de 2ª ordem**, em termos das energias livres de volume $\Delta G_V$, de superfície $\Delta G_S$ e
-configuracional $\Delta G_C$:
+**Raio crítico de 2ª ordem**, em termos das energias livres de volume $`\Delta G_V`$, de superfície $`\Delta G_S`$ e
+configuracional $`\Delta G_C`$:
 
 ```math
 r_C^{2nd} = -\frac{3}{2}\,
@@ -165,7 +165,7 @@ r_C^{1st} = -\frac{2\gamma_{SL}\, f(\theta)}
 = \mathbf{A}\cdot\nabla\mathbf{T}
 ```
 
-**Tensor de campo térmico de 1ª ordem** (aproximação), com entropias $S \equiv G/\Delta T$:
+**Tensor de campo térmico de 1ª ordem** (aproximação), com entropias $`S \equiv G/\Delta T`$:
 
 ```math
 \boldsymbol{\Gamma}^{1st} = -\frac{\gamma_{SL}\, f(\theta)\,\Delta T}
@@ -174,8 +174,8 @@ r_C^{1st} = -\frac{2\gamma_{SL}\, f(\theta)}
 = -\frac{\Delta G_S}{\Delta S_V + \dfrac{\partial \Delta S_S}{\partial r} + \Delta S_C}
 ```
 
-Equivalentemente, $\boldsymbol{\Gamma}^{1st} = \tfrac{1}{2}\,\Delta T\, r_C^{1st}$ e
-$\boldsymbol{\Gamma}^{2nd} = \tfrac{1}{2}\,\Delta T\, r_C^{2nd}$ (forma de Gibbs–Thomson).
+Equivalentemente, $`\boldsymbol{\Gamma}^{1st} = \tfrac{1}{2}\,\Delta T\, r_C^{1st}`$ e
+$`\boldsymbol{\Gamma}^{2nd} = \tfrac{1}{2}\,\Delta T\, r_C^{2nd}`$ (forma de Gibbs–Thomson).
 
 **Taxa de nucleação:**
 
@@ -183,19 +183,19 @@ $\boldsymbol{\Gamma}^{2nd} = \tfrac{1}{2}\,\Delta T\, r_C^{2nd}$ (forma de Gibbs
 I = \frac{D\,A}{\lambda^4}\,\frac{N}{V}\,\exp\left(\frac{\Delta G_C}{\Delta G_{C,Eq}}\right)
 ```
 
-em que $D$ é o coeficiente de autodifusão (m²/s), $N/V$ a densidade de modos da nova fase (modos/m³), $\lambda$ a distância
-que um átomo salta até a nova superfície (m) e $A$ a área da nova fase (m²).
+em que $`D`$ é o coeficiente de autodifusão (m²/s), $`N/V`$ a densidade de modos da nova fase (modos/m³), $`\lambda`$ a distância
+que um átomo salta até a nova superfície (m) e $`A`$ a área da nova fase (m²).
 
 ### 5. Ligação com o experimento e com a MD
 
 Só o gradiente do campo térmico desloca o equilíbrio. No experimento de solidificação transiente,
-$\nabla\mathbf{T}$ é obtido como $G = \dot T / V_L$. A partir de $\boldsymbol{\Gamma}$, o modelo MRB prevê o espaçamento
+$`\nabla\mathbf{T}`$ é obtido como $`G = \dot T / V_L`$. A partir de $`\boldsymbol{\Gamma}`$, o modelo MRB prevê o espaçamento
 dendrítico secundário (SDAS), que concorda com os dados experimentais das duas ligas.
 
-**Hipótese testada pela MD:** $\boldsymbol{\Gamma}$ vale nas duas escalas. Entre o contínuo ($r_C$ ~ μm,
-$\nabla\mathbf{T}$ ~ 10³ K/m) e a MD ($r_C$ ~ nm, $\nabla\mathbf{T}$ ~ 10⁸–10¹⁰ K/m) mudam $\nabla\mathbf{T}$, $\Delta T$ e
-$r_C$, mas $\boldsymbol{\Gamma} = \tfrac{1}{2}\Delta T\, r_C = \mathbf{A}\cdot\nabla\mathbf{T}$ deve se manter. O teste são
-núcleos (*seeds*) sob $\nabla\mathbf{T}$ imposto por NEMD, com $r_C$ obtido por *seeding*.
+**Hipótese testada pela MD:** $`\boldsymbol{\Gamma}`$ vale nas duas escalas. Entre o contínuo ($`r_C`$ ~ μm,
+$`\nabla\mathbf{T}`$ ~ 10³ K/m) e a MD ($`r_C`$ ~ nm, $`\nabla\mathbf{T}`$ ~ 10⁸–10¹⁰ K/m) mudam $`\nabla\mathbf{T}`$, $`\Delta T`$ e
+$`r_C`$, mas $`\boldsymbol{\Gamma} = \tfrac{1}{2}\Delta T\, r_C = \mathbf{A}\cdot\nabla\mathbf{T}`$ deve se manter. O teste são
+núcleos (*seeds*) sob $`\nabla\mathbf{T}`$ imposto por NEMD, com $`r_C`$ obtido por *seeding*.
 
 <p align="center">
   <img src="results/figures/fig_gamma_gradT.png" width="820"
