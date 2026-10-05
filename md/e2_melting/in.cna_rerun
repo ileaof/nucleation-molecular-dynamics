@@ -1,0 +1,13 @@
+variable pot index alnb
+if "${pot} == alnb" then "variable a0 equal 4.0447" else "variable a0 equal 4.05"
+units metal
+atom_style atomic
+boundary p p p
+read_data coexist_${pot}_930.data
+include pot_${pot}.lmp
+compute c all cna/atom $(0.854*v_a0)
+variable isfcc atom c_c==1
+compute nf all reduce sum v_isfcc
+variable ffcc equal c_nf/atoms
+thermo_style custom step v_ffcc
+rerun coexist_${pot}_930.dump dump x y z

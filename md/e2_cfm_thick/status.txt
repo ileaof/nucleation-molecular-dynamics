@@ -1,0 +1,4 @@
+100 ny=8 exit=0
+110 ny=5 exit=0
+111 ny=6 exit=0
+DONE

@@ -1,0 +1,115 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Al3Nb energies: D0_22 at the experimental lattice (no relaxation, positions relaxed only), and L1_2.
+variable s index d022fixed
+units metal
+atom_style atomic
+boundary p p p
+if "${s} == l12" then "lattice custom 1.0 a1 4.0 0 0 a2 0 4.0 0 a3 0 0 4.0 basis 0 0 0 basis 0.5 0.5 0 basis 0.5 0 0.5 basis 0 0.5 0.5" else    "lattice custom 1.0 a1 3.841 0 0 a2 0 3.841 0 a3 0 0 8.609 basis 0 0 0 basis 0.5 0.5 0.5 basis 0 0 0.5 basis 0.5 0.5 0 basis 0 0.5 0.25 basis 0.5 0 0.25 basis 0 0.5 0.75 basis 0.5 0 0.75"
+lattice custom 1.0 a1 3.841 0 0 a2 0 3.841 0 a3 0 0 8.609 basis 0 0 0 basis 0.5 0.5 0.5 basis 0 0 0.5 basis 0.5 0.5 0 basis 0 0.5 0.25 basis 0.5 0 0.25 basis 0 0.5 0.75 basis 0.5 0 0.75
+Lattice spacing in x,y,z = 3.841 3.841 8.609
+region b block 0 4 0 4 0 4
+create_box 2 b
+Created orthogonal box = (0 0 0) to (15.364 15.364 34.436)
+  1 by 1 by 1 MPI processor grid
+if "${s} == l12" then "create_atoms 1 box basis 1 2 basis 2 1 basis 3 1 basis 4 1" else "create_atoms 1 box basis 1 2 basis 2 2 basis 3 1 basis 4 1 basis 5 1 basis 6 1 basis 7 1 basis 8 1"
+create_atoms 1 box basis 1 2 basis 2 2 basis 3 1 basis 4 1 basis 5 1 basis 6 1 basis 7 1 basis 8 1
+Created 512 atoms
+  using lattice units in orthogonal box = (0 0 0) to (15.364 15.364 34.436)
+  create_atoms CPU = 0.001 seconds
+mass 1 26.982
+mass 2 92.906
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al Nb
+group nb type 2
+128 atoms in group nb
+run 0
+WARNING: No fixes with time integration, atoms won't move
+For more information see https://docs.lammps.org/err0028 (src/lammps-10Sep2025/src/verlet.cpp:60)
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.9
+  ghost atom cutoff = 8.9
+  binsize = 4.45, bins = 4 4 8
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair eam/fs, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.419 | 3.419 | 3.419 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   0             -2548.6485      0             -2548.6485      12580.009    
+Loop time of 2.928e-06 on 1 procs for 0 steps with 512 atoms
+
+34.2% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 2.928e-06  |            |       |100.00
+
+Nlocal:            512 ave         512 max         512 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           3101 ave        3101 max        3101 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          47104 ave       47104 max       47104 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 47104
+Ave neighs/atom = 92
+Neighbor list builds = 0
+Dangerous builds = 0
+variable e0 equal pe/atoms
+print "RESULT ${s} unrelaxed E=${e0} xNb=$(count(nb)/atoms)"
+RESULT d022fixed unrelaxed E=-4.97782917139314 xNb=0.25
+if "${s} == l12" then "fix r all box/relax iso 0.0"
+minimize 0 1e-10 10000 100000
+Per MPI rank memory allocation (min/avg/max) = 4.544 | 4.544 | 4.544 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   0             -2548.6485      0             -2548.6485      12580.009    
+         1   0             -2548.6485      0             -2548.6485      12580.009    
+Loop time of 0.0102354 on 1 procs for 1 steps with 512 atoms
+
+75.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+     -2548.64853575329  -2548.64853575329  -2548.64853575329
+  Force two-norm initial, final = 2.3187334e-13 2.2893759e-13
+  Force max component initial, final = 2.2877533e-14 2.2877533e-14
+  Final line search alpha, max atom move = 1 2.2877533e-14
+  Iterations, force evaluations = 1 2
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0078727  | 0.0078727  | 0.0078727  |   0.0 | 76.92
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 8.1731e-05 | 8.1731e-05 | 8.1731e-05 |   0.0 |  0.80
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.002281   |            |       | 22.28
+
+Nlocal:            512 ave         512 max         512 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           3101 ave        3101 max        3101 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          47104 ave       47104 max       47104 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 47104
+Ave neighs/atom = 92
+Neighbor list builds = 0
+Dangerous builds = 0
+variable e1 equal pe/atoms
+print "RESULT ${s} relaxed E=$(pe/atoms) a=$(lx/4) c=$(lz/4)"
+RESULT d022fixed relaxed E=-4.977829171393144847 a=3.8410000000000001918 c=8.6089999999999999858
+Total wall time: 0:00:05

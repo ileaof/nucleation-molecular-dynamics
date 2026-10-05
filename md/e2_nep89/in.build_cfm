@@ -1,0 +1,24 @@
+# Ribbon geometry of md/e2_melting/in.cfm (same lattice orient and region, in lattice units), written as a data file
+# for GPUMD.  (x, y, z) = (fluctuation, thin, interface normal).
+# GPUMD needs every periodic thickness > 2.5 (r_c + 1 A) (src/force/nep.cu; NEP89 r_c = 6 A -> 17.5 A): the E2 ribbons
+# (100) y = 3 cells (12.0 A) and (110) y = 2 cells (11.3 A) are refused, so ny = 5 (20.0 A) and 4 (22.6 A) here; (111) keeps 3 cells (19.5 A).
+#   lmp -in in.build_cfm -var orient 100 -var a0 3.9899
+variable orient index 100
+variable a0     index 3.9899
+units        metal
+atom_style   atomic
+boundary     p p p
+if "${orient} == 100" then "lattice fcc ${a0} orient x 1 0 0 orient y 0 1 0 orient z 0 0 1" "region box block 0 60 0 5 0 30"
+if "${orient} == 110" then "lattice fcc ${a0} orient x 0 0 1 orient y 1 -1 0 orient z 1 1 0" "region box block 0 60 0 4 0 21"
+if "${orient} == 111" then "lattice fcc ${a0} orient x 1 -1 0 orient y 1 1 -2 orient z 1 1 1" "region box block 0 42 0 3 0 17"
+create_box   1 box
+create_atoms 1 box
+mass         1 26.982
+pair_style   zero 6.0
+pair_coeff   * *
+compute      cna all cna/atom $(0.854*v_a0)
+variable     isfcc atom c_cna==1
+compute      nf all reduce sum v_isfcc
+thermo_style custom atoms c_nf lx ly lz
+run          0
+write_data   cfm_${orient}/ribbon.data

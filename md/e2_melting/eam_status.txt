@@ -1,0 +1,9 @@
+borovikov 900 exit=0
+borovikov 960 exit=0
+borovikov 930 exit=0
+mendelev 900 exit=0
+mendelev 920 exit=0
+borovikov 990 exit=0
+mendelev 960 exit=0
+mendelev 940 exit=0
+DONE

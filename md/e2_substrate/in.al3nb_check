@@ -1,0 +1,22 @@
+# Al3Nb energies: D0_22 at the experimental lattice (no relaxation, positions relaxed only), and L1_2.
+variable s index d022fixed
+units metal
+atom_style atomic
+boundary p p p
+if "${s} == l12" then "lattice custom 1.0 a1 4.0 0 0 a2 0 4.0 0 a3 0 0 4.0 basis 0 0 0 basis 0.5 0.5 0 basis 0.5 0 0.5 basis 0 0.5 0.5" else &
+   "lattice custom 1.0 a1 3.841 0 0 a2 0 3.841 0 a3 0 0 8.609 basis 0 0 0 basis 0.5 0.5 0.5 basis 0 0 0.5 basis 0.5 0.5 0 basis 0 0.5 0.25 basis 0.5 0 0.25 basis 0 0.5 0.75 basis 0.5 0 0.75"
+region b block 0 4 0 4 0 4
+create_box 2 b
+if "${s} == l12" then "create_atoms 1 box basis 1 2 basis 2 1 basis 3 1 basis 4 1" else "create_atoms 1 box basis 1 2 basis 2 2 basis 3 1 basis 4 1 basis 5 1 basis 6 1 basis 7 1 basis 8 1"
+mass 1 26.982
+mass 2 92.906
+pair_style meam
+pair_coeff * * ../../potentials/AlNb_Fereidonnejad2022/library.meam Al Nb ../../potentials/AlNb_Fereidonnejad2022/AlNb.meam Al Nb
+group nb type 2
+run 0
+variable e0 equal pe/atoms
+print "RESULT ${s} unrelaxed E=${e0} xNb=$(count(nb)/atoms)"
+if "${s} == l12" then "fix r all box/relax iso 0.0"
+minimize 0 1e-10 10000 100000
+variable e1 equal pe/atoms
+print "RESULT ${s} relaxed E=$(pe/atoms) a=$(lx/4) c=$(lz/4)"

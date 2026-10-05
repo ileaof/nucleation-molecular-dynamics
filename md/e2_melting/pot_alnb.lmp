@@ -1,0 +1,3 @@
+# Fereidonnejad, Moghaddam, Moaddeli, Comput. Mater. Sci. 213 (2022) 111685 — 2NN MEAM Al-Nb (NIST IPR)
+pair_style meam
+pair_coeff * * ../../potentials/AlNb_Fereidonnejad2022/library.meam Al Nb ../../potentials/AlNb_Fereidonnejad2022/AlNb.meam Al

@@ -1,0 +1,103 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# fcc fraction of GPUMD frames with the same CNA as md/e2_melting (cna/atom, cutoff 0.854 a0).
+#   lmp -in in.cna_rerun -var d coexist_900
+variable a0 equal 3.9899
+units      metal
+atom_style atomic
+boundary   p p p
+read_data  ${d}/frame0.data
+read_data  coexist_800/frame0.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (32.468015 32.535421 132.66697)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  8192 atoms
+  read_data CPU = 0.408 seconds
+pair_style zero 6.0
+pair_coeff * *
+compute    c all cna/atom $(0.854*v_a0)
+compute    c all cna/atom 3.4073745999999998091
+variable   isfcc atom c_c==1
+compute    nf all reduce sum v_isfcc
+variable   ffcc equal c_nf/atoms
+thermo_style custom step v_ffcc
+thermo_modify format float %.5f
+thermo     1
+rerun      ${d}/prod.dump dump x y z box yes
+rerun      coexist_800/prod.dump dump x y z box yes
+WARNING: No fixes with time integration, atoms won't move
+For more information see https://docs.lammps.org/err0028 (src/lammps-10Sep2025/src/verlet.cpp:60)
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8
+  ghost atom cutoff = 8
+  binsize = 4, bins = 9 9 34
+  2 neighbor lists, perpetual/occasional/extra = 1 1 0
+  (1) pair zero, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+  (2) compute cna/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 8.265 | 8.265 | 8.265 Mbytes
+   Step         v_ffcc    
+         0  0.49109
+         1  0.50195
+         2  0.52234
+         3  0.52417
+         4  0.51941
+         5  0.54456
+         6  0.53796
+         7  0.53259
+         8  0.57471
+         9  0.57947
+        10  0.60669
+        11  0.58960
+        12  0.59119
+        13  0.60437
+        14  0.59497
+        15  0.62219
+        16  0.61060
+        17  0.59741
+        18  0.60254
+        19  0.59937
+        20  0.59680
+        21  0.57202
+        22  0.58350
+        23  0.59595
+        24  0.60400
+        25  0.58875
+        26  0.58813
+        27  0.60486
+        28  0.58923
+        29  0.59277
+        30  0.60925
+        31  0.60645
+        32  0.58704
+        33  0.59436
+        34  0.58374
+        35  0.58972
+        36  0.57874
+        37  0.58972
+        38  0.60352
+        39  0.58972
+        40  0.60193
+        41  0.58167
+        42  0.60291
+        43  0.59863
+        44  0.58545
+        45  0.61584
+        46  0.60559
+        47  0.59009
+        48  0.57129
+        49  0.58154
+Loop time of 11.2224 on 1 procs for 50 steps with 8192 atoms
+
+Total wall time: 0:00:11

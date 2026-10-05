@@ -1,0 +1,108 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Energy conservation check (NVE) for a potential and timestep.
+variable pot index alnb
+variable dt  index 0.002
+variable T   index 950
+if "${pot} == alnb" then "variable a0 equal 4.0447" else "variable a0 equal 4.05"
+variable a0 equal 4.0447
+units metal
+atom_style atomic
+boundary p p p
+lattice fcc ${a0}
+lattice fcc 4.0447
+Lattice spacing in x,y,z = 4.0447 4.0447 4.0447
+region box block 0 8 0 8 0 8
+create_box 1 box
+Created orthogonal box = (0 0 0) to (32.3576 32.3576 32.3576)
+  2 by 2 by 2 MPI processor grid
+create_atoms 1 box
+Created 2048 atoms
+  using lattice units in orthogonal box = (0 0 0) to (32.3576 32.3576 32.3576)
+  create_atoms CPU = 0.002 seconds
+mass 1 26.982
+include pot_${pot}.lmp
+include pot_alnb.lmp
+# Fereidonnejad, Moghaddam, Moaddeli, Comput. Mater. Sci. 213 (2022) 111685 — 2NN MEAM Al-Nb (NIST IPR)
+pair_style meam
+pair_coeff * * ../../potentials/AlNb_Fereidonnejad2022/library.meam Al Nb ../../potentials/AlNb_Fereidonnejad2022/AlNb.meam Al
+timestep ${dt}
+timestep 0.002
+velocity all create $(2*v_T) 12345 mom yes rot yes dist gaussian
+velocity all create 1900 12345 mom yes rot yes dist gaussian
+fix 1 all nve
+thermo_style custom step time temp etotal
+thermo_modify format float %.6f
+thermo $(round(1.0/v_dt))
+thermo 500
+run $(round(20.0/v_dt))
+run 10000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 10 10 10
+  2 neighbor lists, perpetual/occasional/extra = 2 0 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 9.185 | 9.185 | 9.185 Mbytes
+   Step          Time           Temp          TotEng    
+         0  0.000000 1900.000000 -6378.548507
+       500  1.000000 937.734752 -6378.127840
+      1000  2.000000 923.767722 -6378.129383
+      1500  3.000000 920.859446 -6378.130722
+      2000  4.000000 919.134780 -6378.122915
+      2500  5.000000 943.455591 -6378.135603
+      3000  6.000000 921.833566 -6378.133430
+      3500  7.000000 932.761223 -6378.129463
+      4000  8.000000 945.561002 -6378.138304
+      4500  9.000000 925.911431 -6378.131973
+      5000  10.000000 930.943116 -6378.136506
+      5500  11.000000 942.364888 -6378.135952
+      6000  12.000000 917.636619 -6378.126797
+      6500  13.000000 905.127442 -6378.128155
+      7000  14.000000 920.238201 -6378.123385
+      7500  15.000000 929.703556 -6378.130188
+      8000  16.000000 941.647180 -6378.142784
+      8500  17.000000 930.288449 -6378.132540
+      9000  18.000000 936.335589 -6378.133635
+      9500  19.000000 938.186575 -6378.142107
+     10000  20.000000 936.214387 -6378.136482
+Loop time of 167.775 on 8 procs for 10000 steps with 2048 atoms
+
+Performance: 10.299 ns/day, 2.330 hours/ns, 59.604 timesteps/s, 122.068 katom-step/s
+94.3% CPU use with 8 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 149.35     | 149.67     | 150.29     |   2.3 | 89.21
+Neigh   | 0.80767    | 0.81821    | 0.83059    |   0.9 |  0.49
+Comm    | 15.81      | 16.421     | 16.743     |   6.7 |  9.79
+Output  | 0.0038045  | 0.0064124  | 0.010423   |   2.4 |  0.00
+Modify  | 0.10277    | 0.10585    | 0.10939    |   0.7 |  0.06
+Other   |            | 0.7579     |            |       |  0.45
+
+Nlocal:            256 ave         270 max         246 min
+Histogram: 2 0 2 1 0 0 1 1 0 1
+Nghost:           1431 ave        1441 max        1417 min
+Histogram: 1 0 1 1 0 0 1 2 0 2
+Neighs:        10498.8 ave       10997 max       10136 min
+Histogram: 2 1 0 2 0 0 0 1 1 1
+FullNghs:      20997.5 ave       22243 max       20176 min
+Histogram: 2 0 2 1 0 0 1 1 0 1
+
+Total # of neighbors = 167980
+Ave neighs/atom = 82.021484
+Neighbor list builds = 373
+Dangerous builds = 0
+Total wall time: 0:02:47

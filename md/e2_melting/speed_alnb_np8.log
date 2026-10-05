@@ -1,0 +1,269 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Solid-liquid coexistence (NPH, x-y fixed at the solid lattice, z free): T relaxes to T_m.
+#   mpirun -np 16 lmp -in in.coexist -var pot alnb -var T0 930 -var seed 1
+# Pure Al, fcc [001] interface normal to z. Lengths Å, time ps, energy eV.
+variable pot   index alnb
+variable T0    index 930
+variable seed  index 4928459
+variable nx    index 10
+variable nz    index 30
+variable nprod index 100000
+variable neq   index 10000
+if "${pot} == alnb" then "variable a0 equal 4.0447" else "variable a0 equal 4.05"
+variable a0 equal 4.0447
+
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc ${a0}
+lattice      fcc 4.0447
+Lattice spacing in x,y,z = 4.0447 4.0447 4.0447
+region       box block 0 ${nx} 0 ${nx} 0 ${nz}
+region       box block 0 10 0 ${nx} 0 ${nz}
+region       box block 0 10 0 10 0 ${nz}
+region       box block 0 10 0 10 0 30
+create_box   1 box
+Created orthogonal box = (0 0 0) to (40.447 40.447 121.341)
+  1 by 2 by 4 MPI processor grid
+create_atoms 1 box
+Created 12000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (40.447 40.447 121.341)
+  create_atoms CPU = 0.001 seconds
+mass         1 26.982
+include      pot_${pot}.lmp
+include      pot_alnb.lmp
+# Fereidonnejad, Moghaddam, Moaddeli, Comput. Mater. Sci. 213 (2022) 111685 — 2NN MEAM Al-Nb (NIST IPR)
+pair_style meam
+pair_coeff * * ../../potentials/AlNb_Fereidonnejad2022/library.meam Al Nb ../../potentials/AlNb_Fereidonnejad2022/AlNb.meam Al
+timestep     0.002
+thermo_style custom step temp press pzz pe enthalpy lx ly lz
+thermo       1000
+
+# 1) solid at T0, zero stress
+velocity     all create ${T0} ${seed} mom yes rot yes dist gaussian
+velocity     all create 930 ${seed} mom yes rot yes dist gaussian
+velocity     all create 930 4928459 mom yes rot yes dist gaussian
+fix          eq all npt temp ${T0} ${T0} 0.2 aniso 0.0 0.0 2.0
+fix          eq all npt temp 930 ${T0} 0.2 aniso 0.0 0.0 2.0
+fix          eq all npt temp 930 930 0.2 aniso 0.0 0.0 2.0
+run          ${neq}
+run          500
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 12 12 35
+  2 neighbor lists, perpetual/occasional/extra = 2 0 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 11.12 | 11.12 | 11.12 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+         0   930            7732.2726      7631.9692     -40320         -37919.552      40.447         40.447         121.341      
+       500   658.36823      383.76428      314.41918     -39178.159     -38107.429      41.026445      41.016929      123.0703     
+Loop time of 26.4953 on 8 procs for 500 steps with 12000 atoms
+
+Performance: 3.261 ns/day, 7.360 hours/ns, 18.871 timesteps/s, 226.455 katom-step/s
+92.4% CPU use with 8 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 24.142     | 24.262     | 24.434     |   2.0 | 91.57
+Neigh   | 0.11562    | 0.12387    | 0.12962    |   1.2 |  0.47
+Comm    | 1.8093     | 1.9848     | 2.0987     |   7.1 |  7.49
+Output  | 0.00014192 | 0.0001549  | 0.00021415 |   0.0 |  0.00
+Modify  | 0.099297   | 0.10219    | 0.10408    |   0.5 |  0.39
+Other   |            | 0.02246    |            |       |  0.08
+
+Nlocal:           1500 ave        1522 max        1486 min
+Histogram: 2 1 1 1 0 1 0 1 0 1
+Nghost:           3549 ave        3563 max        3527 min
+Histogram: 1 0 1 0 1 0 1 1 1 2
+Neighs:        60162.2 ave       61045 max       59484 min
+Histogram: 1 1 2 0 1 0 1 1 0 1
+FullNghs:       120324 ave      122218 max      119116 min
+Histogram: 2 1 1 1 0 1 0 1 0 1
+
+Total # of neighbors = 962596
+Ave neighs/atom = 80.216333
+Neighbor list builds = 15
+Dangerous builds = 0
+unfix        eq
+write_data   solid_${pot}_${T0}.data
+write_data   solid_alnb_${T0}.data
+write_data   solid_alnb_930.data
+System init for write_data ...
+
+# 2) melt the upper half with the lower half frozen
+variable     zmid equal (zlo+zhi)/2
+region       up block INF INF INF INF ${zmid} INF units box
+region       up block INF INF INF INF 60.6705 INF units box
+group        liq region up
+6035 atoms in group liq
+group        sol subtract all liq
+5965 atoms in group sol
+velocity     sol set 0 0 0
+fix          freeze sol setforce 0 0 0
+fix          melt liq nvt temp 2500 2500 0.2
+run          ${neq}
+run          500
+Per MPI rank memory allocation (min/avg/max) = 11.17 | 11.19 | 11.2 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+       500   325.42181     -2279.5527     -2303.3002     -39178.159     -38968.091      41.026445      41.016929      123.0703     
+      1000   614.57796      11495.058      11402.275     -38684.575     -36245.498      41.026445      41.016929      123.0703     
+Loop time of 30.8453 on 8 procs for 500 steps with 12000 atoms
+
+Performance: 2.801 ns/day, 8.568 hours/ns, 16.210 timesteps/s, 194.519 katom-step/s
+93.7% CPU use with 8 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 27.953     | 28.188     | 28.406     |   3.1 | 91.39
+Neigh   | 0.17348    | 0.18202    | 0.18867    |   1.3 |  0.59
+Comm    | 2.1761     | 2.3938     | 2.6328     |  10.9 |  7.76
+Output  | 7.7495e-05 | 0.00027684 | 0.001508   |   0.0 |  0.00
+Modify  | 0.041207   | 0.050141   | 0.056958   |   2.8 |  0.16
+Other   |            | 0.03051    |            |       |  0.10
+
+Nlocal:           1500 ave        1529 max        1467 min
+Histogram: 1 0 1 0 1 1 3 0 0 1
+Nghost:        3548.75 ave        3582 max        3520 min
+Histogram: 1 0 0 3 1 1 0 1 0 1
+Neighs:        60115.2 ave       61178 max       58666 min
+Histogram: 1 0 0 1 0 2 1 1 1 1
+FullNghs:       120230 ave      122641 max      117337 min
+Histogram: 1 0 0 1 1 1 2 1 0 1
+
+Total # of neighbors = 961844
+Ave neighs/atom = 80.153667
+Neighbor list builds = 20
+Dangerous builds = 0
+unfix        melt
+# 3) bring the liquid to T0, relax z only (solid still frozen)
+fix          cool liq npt temp ${T0} ${T0} 0.2 z 0.0 0.0 2.0 dilate liq
+fix          cool liq npt temp 930 ${T0} 0.2 z 0.0 0.0 2.0 dilate liq
+fix          cool liq npt temp 930 930 0.2 z 0.0 0.0 2.0 dilate liq
+run          ${neq}
+run          500
+Per MPI rank memory allocation (min/avg/max) = 11.17 | 11.19 | 11.2 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+      1000   614.57796      11495.058      11402.275     -38684.575     -36245.498      41.026445      41.016929      123.0703     
+      1500   714.19383      4618.4315      4220.8298     -38125.677     -36400.114      41.026445      41.016929      127.37208    
+Loop time of 31.573 on 8 procs for 500 steps with 12000 atoms
+
+Performance: 2.737 ns/day, 8.770 hours/ns, 15.836 timesteps/s, 190.036 katom-step/s
+92.4% CPU use with 8 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 28.187     | 28.551     | 28.834     |   3.7 | 90.43
+Neigh   | 0.23607    | 0.2492     | 0.26171    |   1.7 |  0.79
+Comm    | 2.3063     | 2.5978     | 2.9647     |  12.5 |  8.23
+Output  | 7.3017e-05 | 8.4744e-05 | 0.00013594 |   0.0 |  0.00
+Modify  | 0.12121    | 0.1351     | 0.14862    |   3.2 |  0.43
+Other   |            | 0.0394     |            |       |  0.12
+
+Nlocal:           1500 ave        1566 max        1436 min
+Histogram: 2 2 0 0 0 0 0 0 2 2
+Nghost:        3442.88 ave        3552 max        3356 min
+Histogram: 2 1 1 0 0 0 2 0 0 2
+Neighs:        58310.9 ave       62760 max       54013 min
+Histogram: 4 0 0 0 0 0 0 0 2 2
+FullNghs:       116622 ave      125506 max      108259 min
+Histogram: 3 1 0 0 0 0 0 0 2 2
+
+Total # of neighbors = 932974
+Ave neighs/atom = 77.747833
+Neighbor list builds = 28
+Dangerous builds = 0
+unfix        cool
+unfix        freeze
+velocity     sol create ${T0} $(v_seed+1) mom yes rot yes dist gaussian
+velocity     sol create 930 $(v_seed+1) mom yes rot yes dist gaussian
+velocity     sol create 930 4928460 mom yes rot yes dist gaussian
+
+# 4) coexistence, NPH along z
+compute      q6 all orientorder/atom degrees 1 6 nnn 12 cutoff 3.6
+variable     issol atom c_q6[1]>0.40
+compute      nsol all reduce sum v_issol
+variable     fsol equal c_nsol/atoms
+fix          nph all nph z 0.0 0.0 2.0
+fix          avg all ave/time 100 10 1000 v_fsol
+thermo_style custom step temp press pzz pe enthalpy lz v_fsol
+dump         d all custom 25000 coexist_${pot}_${T0}.dump id x y z c_q6[1]
+dump         d all custom 25000 coexist_alnb_${T0}.dump id x y z c_q6[1]
+dump         d all custom 25000 coexist_alnb_930.dump id x y z c_q6[1]
+run          ${nprod}
+run          1000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 12 12 37
+  3 neighbor lists, perpetual/occasional/extra = 2 1 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+  (3) compute orientorder/atom, occasional, copy from (1)
+      attributes: full, newton on
+      pair build: copy
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 11.19 | 11.2 | 11.22 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lz           v_fsol    
+      1500   1176.4423      8191.1849      7739.1519     -38125.677     -35205.207      127.37208      0.64416667   
+      2000   986.57768      722.18345     -209.98301     -37846.177     -36216.813      130.76841      0.52541667   
+      2500   970.87044      974.25947      877.2332      -37821.789     -36181.96       130.96853      0.50108333   
+Loop time of 63.0294 on 8 procs for 1000 steps with 12000 atoms
+
+Performance: 2.742 ns/day, 8.754 hours/ns, 15.866 timesteps/s, 190.387 katom-step/s
+93.2% CPU use with 8 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 55.747     | 56.825     | 57.966     |  12.2 | 90.16
+Neigh   | 0.42395    | 0.45865    | 0.48987    |   4.0 |  0.73
+Comm    | 4.2396     | 5.4069     | 6.5042     |  40.6 |  8.58
+Output  | 0.01826    | 0.01851    | 0.020004   |   0.4 |  0.03
+Modify  | 0.25979    | 0.26162    | 0.26316    |   0.2 |  0.42
+Other   |            | 0.05829    |            |       |  0.09
+
+Nlocal:           1500 ave        1604 max        1383 min
+Histogram: 2 0 1 1 0 0 0 1 1 2
+Nghost:        3360.38 ave        3482 max        3250 min
+Histogram: 2 2 0 0 0 0 0 1 1 2
+Neighs:        56923.1 ave       63787 max       49140 min
+Histogram: 2 0 1 1 0 0 0 0 2 2
+FullNghs:       113846 ave      128115 max       98080 min
+Histogram: 2 0 1 1 0 0 0 1 1 2
+
+Total # of neighbors = 910770
+Ave neighs/atom = 75.8975
+Neighbor list builds = 51
+Dangerous builds = 0
+write_data   coexist_${pot}_${T0}.data
+write_data   coexist_alnb_${T0}.data
+write_data   coexist_alnb_930.data
+System init for write_data ...
+Total wall time: 0:02:40

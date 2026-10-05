@@ -1,0 +1,22 @@
+# GPU/CPU benchmark: liquid Al, Borovikov 2024 EAM/FS, n x n x n fcc cells (4 n^3 atoms).
+#   GPU (Windows binary, OpenCL):  lmp -sf gpu -pk gpu 1 -in in.bench -var n 40
+#   GPU (WSL CUDA build):          lmp -sf gpu -pk gpu 1 -in in.bench -var n 40
+#   CPU reference:                 mpirun -np 8 lmp -in in.bench -var n 40
+variable n     index 40
+variable steps index 2000
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc 4.016
+region       box block 0 ${n} 0 ${n} 0 ${n}
+create_box   1 box
+create_atoms 1 box
+mass         1 26.982
+pair_style   eam/fs
+pair_coeff   * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al
+timestep     0.002
+velocity     all create 1200 4928459 mom yes rot yes dist gaussian
+fix          1 all npt temp 1200 1200 0.2 iso 0 0 2.0
+thermo       500
+run          500
+run          ${steps}

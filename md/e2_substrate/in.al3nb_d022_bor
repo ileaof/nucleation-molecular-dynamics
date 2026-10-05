@@ -1,0 +1,60 @@
+# Al3Nb D0_22 (I4/mmm), fcc Al and bcc Nb at 0 K: lattice and formation energy, Al-Nb MEAM 2022.
+units metal
+atom_style atomic
+boundary p p p
+variable ea equal 0
+# --- fcc Al
+lattice fcc 4.016
+region b block 0 4 0 4 0 4
+create_box 2 b
+create_atoms 1 box
+mass 1 26.982
+mass 2 92.906
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al Nb
+fix r all box/relax iso 0.0
+minimize 0 1e-10 10000 100000
+variable eAl equal pe/atoms
+variable aAl equal lx/4
+print "RESULT fcc_Al a=${aAl} E=${eAl}"
+clear
+# --- bcc Nb
+units metal
+atom_style atomic
+boundary p p p
+lattice bcc 3.26
+region b block 0 4 0 4 0 4
+create_box 2 b
+create_atoms 2 box
+mass 1 26.982
+mass 2 92.906
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al Nb
+fix r all box/relax iso 0.0
+minimize 0 1e-10 10000 100000
+variable eNb equal pe/atoms
+variable aNb equal lx/4
+print "RESULT bcc_Nb a=${aNb} E=${eNb}"
+clear
+# --- Al3Nb D0_22: a = 3.841, c = 8.609 Å (experiment)
+units metal
+atom_style atomic
+boundary p p p
+lattice custom 1.0 a1 3.841 0 0 a2 0 3.841 0 a3 0 0 8.609 &
+        basis 0 0 0 basis 0.5 0.5 0.5 &
+        basis 0 0 0.5 basis 0.5 0.5 0 basis 0 0.5 0.25 basis 0.5 0 0.25 basis 0 0.5 0.75 basis 0.5 0 0.75
+region b block 0 4 0 4 0 2
+create_box 2 b
+create_atoms 1 box basis 1 2 basis 2 2 basis 3 1 basis 4 1 basis 5 1 basis 6 1 basis 7 1 basis 8 1
+mass 1 26.982
+mass 2 92.906
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al Nb
+fix r all box/relax aniso 0.0
+minimize 0 1e-10 10000 100000
+variable eD equal pe/atoms
+variable a equal lx/4
+variable c equal lz/2
+group al type 1
+group nb type 2
+print "RESULT Al3Nb_D022 a=${a} c=${c} E=${eD} nAl=$(count(al)) nNb=$(count(nb))"

@@ -1,0 +1,3 @@
+# store files byte-for-byte (author scripts are verbatim copies); shell scripts must stay LF for WSL
+* -text
+*.sh text eol=lf

@@ -1,0 +1,271 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Solid-liquid coexistence (NPH, x-y fixed at the solid lattice, z free): T relaxes to T_m.
+#   mpirun -np 16 lmp -in in.coexist -var pot alnb -var T0 930 -var seed 1
+# Pure Al, fcc [001] interface normal to z. Lengths Å, time ps, energy eV.
+variable pot   index alnb
+variable T0    index 930
+variable seed  index 4928459
+variable nx    index 10
+variable nz    index 30
+variable nprod index 100000
+variable neq   index 10000
+if "${pot} == alnb" then "variable a0 equal 4.0447" else "variable a0 equal 4.05"
+variable a0 equal 4.05
+
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc ${a0}
+lattice      fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region       box block 0 ${nx} 0 ${nx} 0 ${nz}
+region       box block 0 10 0 ${nx} 0 ${nz}
+region       box block 0 10 0 10 0 ${nz}
+region       box block 0 10 0 10 0 30
+create_box   1 box
+Created orthogonal box = (0 0 0) to (40.5 40.5 121.5)
+  2 by 2 by 4 MPI processor grid
+create_atoms 1 box
+Created 12000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (40.5 40.5 121.5)
+  create_atoms CPU = 0.038 seconds
+mass         1 26.982
+include      pot_${pot}.lmp
+include      pot_jelinek.lmp
+# Jelinek et al., Phys. Rev. B 85 (2012) 245102 — MEAM Al-Si-Mg-Cu-Fe (LAMMPS distribution)
+pair_style meam
+pair_coeff * * ../../potentials/AlSiMgCuFe_Jelinek2012/library.meam AlS SiS MgS CuS FeS ../../potentials/AlSiMgCuFe_Jelinek2012/AlSiMgCuFe.meam AlS
+Reading MEAM library file ../../potentials/AlSiMgCuFe_Jelinek2012/library.meam with DATE: 2012-06-29
+Reading MEAM potential file ../../potentials/AlSiMgCuFe_Jelinek2012/AlSiMgCuFe.meam with DATE: 2012-06-29
+timestep     0.002
+thermo_style custom step temp press pzz pe enthalpy lx ly lz
+thermo       1000
+
+# 1) solid at T0, zero stress
+velocity     all create ${T0} ${seed} mom yes rot yes dist gaussian
+velocity     all create 930 ${seed} mom yes rot yes dist gaussian
+velocity     all create 930 4928459 mom yes rot yes dist gaussian
+fix          eq all npt temp ${T0} ${T0} 0.2 aniso 0.0 0.0 2.0
+fix          eq all npt temp 930 ${T0} 0.2 aniso 0.0 0.0 2.0
+fix          eq all npt temp 930 930 0.2 aniso 0.0 0.0 2.0
+run          ${neq}
+run          500
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 12 12 35
+  2 neighbor lists, perpetual/occasional/extra = 2 0 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 9.752 | 9.752 | 9.752 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+         0   930            7730.3475      7629.9678     -40236         -37832.02       40.5           40.5           121.5        
+       500   674.18783     -1087.5735     -1226.6192     -39093.901     -38187.852      40.92688       40.920488      122.80769    
+Loop time of 37.2529 on 16 procs for 500 steps with 12000 atoms
+
+Performance: 2.319 ns/day, 10.348 hours/ns, 13.422 timesteps/s, 161.061 katom-step/s
+91.9% CPU use with 16 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 24.533     | 25.721     | 26.989     |  21.8 | 69.05
+Neigh   | 0.074478   | 0.09682    | 0.12244    |   4.9 |  0.26
+Comm    | 3.9506     | 5.2373     | 6.5196     |  47.8 | 14.06
+Output  | 0.030731   | 0.042302   | 0.050236   |   2.4 |  0.11
+Modify  | 5.0338     | 5.2101     | 5.3231     |   3.9 | 13.99
+Other   |            | 0.945      |            |       |  2.54
+
+Nlocal:            750 ave         773 max         732 min
+Histogram: 2 1 1 4 2 1 3 0 1 1
+Nghost:           2429 ave        2447 max        2406 min
+Histogram: 1 1 0 3 1 2 4 1 1 2
+Neighs:        30180.5 ave       31299 max       29220 min
+Histogram: 2 1 0 3 4 1 3 1 0 1
+FullNghs:        60361 ave       62288 max       58846 min
+Histogram: 2 1 1 4 2 1 3 1 0 1
+
+Total # of neighbors = 965776
+Ave neighs/atom = 80.481333
+Neighbor list builds = 14
+Dangerous builds = 0
+unfix        eq
+write_data   solid_${pot}_${T0}.data
+write_data   solid_jelinek_${T0}.data
+write_data   solid_jelinek_930.data
+System init for write_data ...
+
+# 2) melt the upper half with the lower half frozen
+variable     zmid equal (zlo+zhi)/2
+region       up block INF INF INF INF ${zmid} INF units box
+region       up block INF INF INF INF 60.7500000000001 INF units box
+group        liq region up
+5984 atoms in group liq
+group        sol subtract all liq
+6016 atoms in group sol
+velocity     sol set 0 0 0
+fix          freeze sol setforce 0 0 0
+fix          melt liq nvt temp 2500 2500 0.2
+run          ${neq}
+run          500
+Per MPI rank memory allocation (min/avg/max) = 9.78 | 9.793 | 9.806 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+       500   337.08752     -3802.8429     -3934.4008     -39093.901     -39059.253      40.92688       40.920488      122.80769    
+      1000   627.84987      7102.9075      6869.9062     -38587.336     -36701.743      40.92688       40.920488      122.80769    
+Loop time of 34.5321 on 16 procs for 500 steps with 12000 atoms
+
+Performance: 2.502 ns/day, 9.592 hours/ns, 14.479 timesteps/s, 173.751 katom-step/s
+90.0% CPU use with 16 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 24.958     | 25.953     | 27.028     |  15.3 | 75.16
+Neigh   | 0.10826    | 0.13352    | 0.16104    |   4.0 |  0.39
+Comm    | 4.9434     | 5.9735     | 7.0283     |  31.0 | 17.30
+Output  | 0.023912   | 0.024241   | 0.027704   |   0.6 |  0.07
+Modify  | 1.2023     | 1.3962     | 1.5388     |   8.6 |  4.04
+Other   |            | 1.052      |            |       |  3.05
+
+Nlocal:            750 ave         778 max         725 min
+Histogram: 1 1 4 2 1 1 3 0 1 2
+Nghost:           2429 ave        2454 max        2401 min
+Histogram: 2 1 0 3 1 1 2 4 1 1
+Neighs:        30179.2 ave       31376 max       29031 min
+Histogram: 1 2 2 1 2 3 1 1 1 2
+FullNghs:      60358.4 ave       62749 max       58289 min
+Histogram: 1 3 2 1 2 1 3 0 1 2
+
+Total # of neighbors = 965734
+Ave neighs/atom = 80.477833
+Neighbor list builds = 19
+Dangerous builds = 0
+unfix        melt
+# 3) bring the liquid to T0, relax z only (solid still frozen)
+fix          cool liq npt temp ${T0} ${T0} 0.2 z 0.0 0.0 2.0 dilate liq
+fix          cool liq npt temp 930 ${T0} 0.2 z 0.0 0.0 2.0 dilate liq
+fix          cool liq npt temp 930 930 0.2 z 0.0 0.0 2.0 dilate liq
+run          ${neq}
+run          500
+Per MPI rank memory allocation (min/avg/max) = 9.781 | 9.795 | 9.806 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+      1000   627.84987      7102.9075      6869.9062     -38587.336     -36701.743      40.92688       40.920488      122.80769    
+      1500   715.53654      5504.7114      5224.6027     -38004.018     -36171.07       40.92688       40.920488      125.67781    
+Loop time of 36.9017 on 16 procs for 500 steps with 12000 atoms
+
+Performance: 2.341 ns/day, 10.250 hours/ns, 13.550 timesteps/s, 162.594 katom-step/s
+89.6% CPU use with 16 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 23.702     | 24.954     | 26.172     |  15.4 | 67.62
+Neigh   | 0.14762    | 0.17253    | 0.20526    |   3.5 |  0.47
+Comm    | 4.5228     | 5.7366     | 6.9964     |  32.0 | 15.55
+Output  | 0.0049511  | 0.0062369  | 0.0085447  |   1.8 |  0.02
+Modify  | 4.9363     | 5.064      | 5.1803     |   3.2 | 13.72
+Other   |            | 0.9683     |            |       |  2.62
+
+Nlocal:            750 ave         810 max         699 min
+Histogram: 2 1 2 3 1 2 1 3 0 1
+Nghost:        2371.62 ave        2489 max        2268 min
+Histogram: 3 1 1 1 3 3 0 0 1 3
+Neighs:        29624.4 ave       32714 max       26754 min
+Histogram: 2 1 1 2 4 0 1 3 1 1
+FullNghs:      59248.9 ave       65266 max       53924 min
+Histogram: 2 1 2 2 3 0 1 3 1 1
+
+Total # of neighbors = 947982
+Ave neighs/atom = 78.9985
+Neighbor list builds = 27
+Dangerous builds = 0
+unfix        cool
+unfix        freeze
+velocity     sol create ${T0} $(v_seed+1) mom yes rot yes dist gaussian
+velocity     sol create 930 $(v_seed+1) mom yes rot yes dist gaussian
+velocity     sol create 930 4928460 mom yes rot yes dist gaussian
+
+# 4) coexistence, NPH along z
+compute      q6 all orientorder/atom degrees 1 6 nnn 12 cutoff 3.6
+variable     issol atom c_q6[1]>0.40
+compute      nsol all reduce sum v_issol
+variable     fsol equal c_nsol/atoms
+fix          nph all nph z 0.0 0.0 2.0
+fix          avg all ave/time 100 10 1000 v_fsol
+thermo_style custom step temp press pzz pe enthalpy lz v_fsol
+dump         d all custom 25000 coexist_${pot}_${T0}.dump id x y z c_q6[1]
+dump         d all custom 25000 coexist_jelinek_${T0}.dump id x y z c_q6[1]
+dump         d all custom 25000 coexist_jelinek_930.dump id x y z c_q6[1]
+run          ${nprod}
+run          1000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 12 12 36
+  3 neighbor lists, perpetual/occasional/extra = 2 1 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+  (3) compute orientorder/atom, occasional, copy from (1)
+      attributes: full, newton on
+      pair build: copy
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 9.782 | 9.802 | 9.834 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lz           v_fsol    
+      1500   1181.7379      9174.1049      8948.1045     -38004.018     -34965.945      125.67781      0.65866667   
+      2000   1022.8379      2066.1841      1854.1387     -37774.573     -35908.839      129.3283       0.534        
+      2500   1008.2571     -335.65305     -1242.6435     -37752.957     -36235.009      130.68533      0.507        
+Loop time of 59.6762 on 16 procs for 1000 steps with 12000 atoms
+
+Performance: 2.896 ns/day, 8.288 hours/ns, 16.757 timesteps/s, 201.085 katom-step/s
+92.4% CPU use with 16 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 39.912     | 43.362     | 47.201     |  36.7 | 72.66
+Neigh   | 0.28604    | 0.3517     | 0.4339     |   8.5 |  0.59
+Comm    | 4.634      | 8.6555     | 12.151     |  84.1 | 14.50
+Output  | 0.030569   | 0.031922   | 0.033075   |   0.6 |  0.05
+Modify  | 5.971      | 6.0712     | 6.1385     |   1.7 | 10.17
+Other   |            | 1.204      |            |       |  2.02
+
+Nlocal:            750 ave         805 max         703 min
+Histogram: 4 0 3 1 0 0 4 1 2 1
+Nghost:        2321.19 ave        2488 max        2163 min
+Histogram: 5 3 0 0 0 0 0 0 3 5
+Neighs:        28629.9 ave       32187 max       25204 min
+Histogram: 4 2 2 0 0 0 0 1 5 2
+FullNghs:      57259.8 ave       64537 max       50197 min
+Histogram: 4 0 4 0 0 0 0 4 1 3
+
+Total # of neighbors = 916156
+Ave neighs/atom = 76.346333
+Neighbor list builds = 52
+Dangerous builds = 0
+write_data   coexist_${pot}_${T0}.data
+write_data   coexist_jelinek_${T0}.data
+write_data   coexist_jelinek_930.data
+System init for write_data ...
+Total wall time: 0:02:58

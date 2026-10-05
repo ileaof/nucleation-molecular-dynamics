@@ -1,0 +1,3 @@
+# Jelinek et al., Phys. Rev. B 85 (2012) 245102 — MEAM Al-Si-Mg-Cu-Fe (LAMMPS distribution)
+pair_style meam
+pair_coeff * * ../../potentials/AlSiMgCuFe_Jelinek2012/library.meam AlS SiS MgS CuS FeS ../../potentials/AlSiMgCuFe_Jelinek2012/AlSiMgCuFe.meam AlS

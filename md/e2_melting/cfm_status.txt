@@ -1,0 +1,4 @@
+111 exit=0
+110 exit=0
+100 exit=0
+DONE

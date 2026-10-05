@@ -1,0 +1,110 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Energy conservation check (NVE) for a potential and timestep.
+variable pot index alnb
+variable dt  index 0.002
+variable T   index 950
+if "${pot} == alnb" then "variable a0 equal 4.0447" else "variable a0 equal 4.05"
+variable a0 equal 4.05
+units metal
+atom_style atomic
+boundary p p p
+lattice fcc ${a0}
+lattice fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region box block 0 8 0 8 0 8
+create_box 1 box
+Created orthogonal box = (0 0 0) to (32.4 32.4 32.4)
+  2 by 2 by 2 MPI processor grid
+create_atoms 1 box
+Created 2048 atoms
+  using lattice units in orthogonal box = (0 0 0) to (32.4 32.4 32.4)
+  create_atoms CPU = 0.001 seconds
+mass 1 26.982
+include pot_${pot}.lmp
+include pot_jelinek.lmp
+# Jelinek et al., Phys. Rev. B 85 (2012) 245102 — MEAM Al-Si-Mg-Cu-Fe (LAMMPS distribution)
+pair_style meam
+pair_coeff * * ../../potentials/AlSiMgCuFe_Jelinek2012/library.meam AlS SiS MgS CuS FeS ../../potentials/AlSiMgCuFe_Jelinek2012/AlSiMgCuFe.meam AlS
+Reading MEAM library file ../../potentials/AlSiMgCuFe_Jelinek2012/library.meam with DATE: 2012-06-29
+Reading MEAM potential file ../../potentials/AlSiMgCuFe_Jelinek2012/AlSiMgCuFe.meam with DATE: 2012-06-29
+timestep ${dt}
+timestep 0.002
+velocity all create $(2*v_T) 12345 mom yes rot yes dist gaussian
+velocity all create 1900 12345 mom yes rot yes dist gaussian
+fix 1 all nve
+thermo_style custom step time temp etotal
+thermo_modify format float %.6f
+thermo $(round(1.0/v_dt))
+thermo 500
+run $(round(20.0/v_dt))
+run 10000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 10 10 10
+  2 neighbor lists, perpetual/occasional/extra = 2 0 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 9.185 | 9.185 | 9.185 Mbytes
+   Step          Time           Temp          TotEng    
+         0  0.000000 1900.000000 -6364.212547
+       500  1.000000 920.987365 -6363.731018
+      1000  2.000000 930.599320 -6363.726751
+      1500  3.000000 932.003473 -6363.721219
+      2000  4.000000 918.799978 -6363.711443
+      2500  5.000000 927.989303 -6363.716885
+      3000  6.000000 921.935170 -6363.712314
+      3500  7.000000 911.797807 -6363.709902
+      4000  8.000000 928.356089 -6363.720730
+      4500  9.000000 941.436520 -6363.728129
+      5000  10.000000 940.200214 -6363.726550
+      5500  11.000000 914.819437 -6363.713767
+      6000  12.000000 922.319050 -6363.708397
+      6500  13.000000 922.440431 -6363.713502
+      7000  14.000000 918.066375 -6363.709557
+      7500  15.000000 936.209753 -6363.726725
+      8000  16.000000 942.423526 -6363.729645
+      8500  17.000000 918.568745 -6363.717669
+      9000  18.000000 926.060371 -6363.719908
+      9500  19.000000 913.462128 -6363.705553
+     10000  20.000000 910.987036 -6363.714140
+Loop time of 163.561 on 8 procs for 10000 steps with 2048 atoms
+
+Performance: 10.565 ns/day, 2.272 hours/ns, 61.139 timesteps/s, 125.213 katom-step/s
+91.0% CPU use with 8 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 140.93     | 141.88     | 142.8      |   6.6 | 86.74
+Neigh   | 0.78941    | 0.80222    | 0.82517    |   1.2 |  0.49
+Comm    | 17.857     | 18.995     | 19.961     |  15.5 | 11.61
+Output  | 0.0017197  | 0.0035252  | 0.0086367  |   3.4 |  0.00
+Modify  | 0.10432    | 0.10764    | 0.11049    |   0.6 |  0.07
+Other   |            | 1.776      |            |       |  1.09
+
+Nlocal:            256 ave         262 max         249 min
+Histogram: 1 0 0 2 0 1 3 0 0 1
+Nghost:           1431 ave        1438 max        1425 min
+Histogram: 1 0 0 3 1 0 2 0 0 1
+Neighs:        10471.9 ave       10667 max       10246 min
+Histogram: 2 0 0 0 2 1 0 0 1 2
+FullNghs:      20943.8 ave       21450 max       20362 min
+Histogram: 1 0 0 2 0 1 2 1 0 1
+
+Total # of neighbors = 167550
+Ave neighs/atom = 81.811523
+Neighbor list builds = 356
+Dangerous builds = 0
+Total wall time: 0:02:43

@@ -1,0 +1,42 @@
+# Latent heat: <H>_liquid - <H>_solid at T (NPT, P = 0), pure Al.
+#   mpirun -np 8 lmp -in in.enthalpy -var pot alnb -var T 930 -var phase solid|liquid
+variable pot   index alnb
+variable T     index 930
+variable phase index solid
+variable seed  index 7211
+variable n     index 8
+variable neq   index 10000
+variable nprod index 25000
+variable Tmelt index 1700
+variable a0 equal 4.05
+if "${pot} == alnb" then "variable a0 equal 4.0447"
+if "${pot} == borovikov" then "variable a0 equal 4.016"
+if "${pot} == mendelev" then "variable a0 equal 4.045"
+
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc ${a0}
+region       box block 0 ${n} 0 ${n} 0 ${n}
+create_box   1 box
+create_atoms 1 box
+mass         1 26.982
+include      pot_${pot}.lmp
+timestep     0.002
+thermo       1000
+thermo_style custom step temp press pe enthalpy vol
+
+if "${phase} == liquid" then &
+   "velocity all create ${Tmelt} ${seed} mom yes rot yes dist gaussian" &
+   "fix m all npt temp ${Tmelt} ${Tmelt} 0.2 iso 0.0 0.0 2.0" &
+   "run ${neq}" &
+   "unfix m" &
+else &
+   "velocity all create ${T} ${seed} mom yes rot yes dist gaussian"
+
+fix          eq all npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0
+run          ${neq}
+variable     h equal enthalpy/atoms
+variable     v equal vol/atoms
+fix          avg all ave/time 10 100 1000 v_h v_v c_thermo_temp file H_${pot}_${phase}_${T}.dat
+run          ${nprod}

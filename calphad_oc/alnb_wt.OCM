@@ -1,0 +1,81 @@
+new Y
+r t /mnt/c/Users/ileao/OneDrive/Documentos/OpenCalphad/OC6/ALFENB-B2-4SL.TDB
+AL NB
+
+
+@$ ===== CASE w(nb)=0.05 : stable liquidus (AL3NB appears)
+set status phase *=ent 0
+set cond t=1450 p=1e5 n=1 w(nb)=0.05
+c e
+set status phase al3nb=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.05 : peritectic (FCC_A1 appears)
+set status phase *=ent 0
+set cond t=940 w(nb)=0.05
+c e
+set status phase fcc_a1=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.05 : metastable FCC_A1 liquidus (only LIQUID + FCC_A1)
+set status phase *=sus
+set status phase liquid fcc_a1=ent 0
+set cond t=950 w(nb)=0.05
+c e
+set status phase fcc_a1=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.0516 : stable liquidus (AL3NB appears)
+set status phase *=ent 0
+set cond t=1450 p=1e5 n=1 w(nb)=0.0516
+c e
+set status phase al3nb=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.0516 : peritectic (FCC_A1 appears)
+set status phase *=ent 0
+set cond t=940 w(nb)=0.0516
+c e
+set status phase fcc_a1=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.0516 : metastable FCC_A1 liquidus (only LIQUID + FCC_A1)
+set status phase *=sus
+set status phase liquid fcc_a1=ent 0
+set cond t=950 w(nb)=0.0516
+c e
+set status phase fcc_a1=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.1101 : stable liquidus (AL3NB appears)
+set status phase *=ent 0
+set cond t=1450 p=1e5 n=1 w(nb)=0.1101
+c e
+set status phase al3nb=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.1101 : peritectic (FCC_A1 appears)
+set status phase *=ent 0
+set cond t=940 w(nb)=0.1101
+c e
+set status phase fcc_a1=fix 0
+set cond t=none
+c e
+l r 4
+@$ ===== CASE w(nb)=0.1101 : metastable FCC_A1 liquidus (only LIQUID + FCC_A1)
+set status phase *=sus
+set status phase liquid fcc_a1=ent 0
+set cond t=950 w(nb)=0.1101
+c e
+set status phase fcc_a1=fix 0
+set cond t=none
+c e
+l r 4
+fin

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# MD trajectories and large run outputs (regenerable; > GitHub limits)
+*.dump
+prod.xyz
+*.lammpstrj
+md/**/movie.xyz
+md/**/restart*
+md/**/*.restart
+
+# Office lock / temp files
+~$*
+*.tmp

@@ -1,0 +1,2 @@
+NEP89 dt=2 fs  T_end=933 K  Etot drift = -0.0008 eV/atom/ns  (E0=-7728.626)
+NEP89 dt=1 fs  T_end=929 K  Etot drift = -0.0000 eV/atom/ns  (E0=-7728.910)

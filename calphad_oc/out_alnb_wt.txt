@@ -1,0 +1,365 @@
+
+3A unfished preparations for XTDB
+
+
+Open Calphad (OC) software version   6.083 , linked 2025-05-05
+with command line monitor version  73
+
+This program is available with a GNU General Public License.
+either version 2 of the License, or any later version.
+It includes the General Thermodynamic Package, version GTP-3.31,
+Hillert's equilibrium calculation algorithm version HMS-3.0 ,
+step/map/plot software version SMP-2.30 using GNUPLOT 5.2 graphics.
+Numerical routines are extracted from LAPACK and BLAS and
+the assessment procedure uses LMDIF from ANL.
+
+Linked with OpenMp for parallel execution
+ Warning, no environment variable OCHOME and no help file
+ Working directory is: /mnt/c/Users/ileao/OneDrive/Documentos/Nucleation_MD/calphad_oc
+--->OC6: No step or map results to delete
+ All data removed, reinitiating
+
+3A unfished preparations for XTDB
+
+ Warning, no environment variable OCHOME and no help file
+ Working directory is: /mnt/c/Users/ileao/OneDrive/Documentos/Nucleation_MD/calphad_oc
+--->OC6: 3E Database file extention is: ".tdb"
+Database has  3 elements: AL FE NB
+Give the elements to select, finish with empty line
+Select elements /all/:Selected  2 elements: AL NB
+Select elements /no more/:Selected  2 elements: AL NB
+3E reading database file: /mnt/c/Users/ileao/OneDrive/Documentos/OpenCalphad/OC6/ALFENB-B2-4SL.TDB
+3E Found a type_def DIS_PART: 1 with B2_4SL and BCC_A2 type: 1
+3E *** Warning, ignoring line    51 with " DEFINE_SYSTEM_DEFAULT SPECIE 2 !"
+
+3E Warning: Parameter reference missing   4154, around line:    224 continuing
+3E Warning: Parameter reference missing   4154, around line:    231 continuing
+3E Warning: Parameter reference missing   4154, around line:    245 continuing
+3E Warning: Parameter reference missing   4154, around line:    247 continuing
+3E Warning: Parameter reference missing   4154, around line:    277 continuing
+3E Warning: Parameter reference missing   4154, around line:    279 continuing
+3E Warning: Parameter reference missing   4154, around line:    283 continuing
+3E Warning: Parameter reference missing   4154, around line:    285 continuing
+3E Warning: Parameter reference missing   4154, around line:    348 continuing
+3E Warning: Parameter reference missing   4154, around line:    350 continuing
+3E Warning: Parameter reference missing   4154, around line:    354 continuing
+3E Warning: Parameter reference missing   4154, around line:    356 continuing
+3E Warning: Parameter reference missing   4154, around line:    366 continuing
+3E Warning: Parameter reference missing   4154, around line:    368 continuing
+3E Warning: Parameter reference missing   4154, around line:    372 continuing
+3E Warning: Parameter reference missing   4154, around line:    374 continuing
+3E Rewinding to read disordered part of phases
+3E Adding disordered part to B2_4SL  1  1 -1
+3E checking if ordered phase has  magnetic model
+3E Phase B2_4SL has order/disorder partition model adding first  4; thisdis:  1
+There are      16 parameters with no reference
+
+Out of   263 model parameters    64 have been entered
+
+
+
+There were warnings, check them carefully
+and press RETURN if you wish to continue.
+
+There are     2 bibliographic references
+REF:1           '*** Not set by database or user'
+REF:0           '*** Not set by database or user'
+
+
+ *** There were warnings from reading the database
+ *** If you run a macro file please scroll back and check!
+
+--->OC6:--->OC6:--->OC6:--->OC6:3Y For B2_4SL   32 additional disordered gridpoints calculated
+Gridmin:    5024 points   3.15E-03 s and       3 clockcycles, T= 1450.00
+ 3Y leaving global_gridmin
+Equilibrium result:  15 its,  3.5550E-03 s,      3 cc, GS= -8.0300165E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  2.1600E-04 s,      0 cc, GS= -8.8005415E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+3Y For B2_4SL   32 additional disordered gridpoints calculated
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=.05, 4:<AL3NB>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=   1539.27 K (  1266.12 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.7975E+01 g, RT=   1.2798E+04 J/mol
+G= -8.80054E+04 J, G/N=-8.8005E+04 J/mol, H= 4.6853E+04 J, S= 8.761E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.8494E-01  0.95000 -6.7618E+00  1.1572E-03  SER (default)   
+NB                1.5055E-02  0.05000 -1.4374E+01  5.7208E-07  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.797E-02  0.00E+00  1.00E+00    1.00  0.00E+00  W:
+ AL     9.50000E-01  NB     5.00000E-02
+
+AL3NB................... F  0.000E+00  0.00E+00  0.00E+00    4.00  0.00E+00  W:
+ NB     5.34330E-01  AL     4.65670E-01
+
+--->OC6:--->OC6:--->OC6:--->OC6:3Y For B2_4SL   32 additional disordered gridpoints calculated
+Gridmin:    5024 points   2.92E-03 s and       3 clockcycles, T=  940.00
+ 3Y leaving global_gridmin
+Equilibrium result:  12 its,  3.2030E-03 s,      3 cc, GS= -4.0481599E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  1.9600E-04 s,      0 cc, GS= -4.0095125E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+3Y For B2_4SL   32 additional disordered gridpoints calculated
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=.05, 4:<FCC_A1>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=    934.51 K (   661.36 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.7975E+01 g, RT=   7.7700E+03 J/mol
+G= -4.00951E+04 J, G/N=-4.0095E+04 J/mol, H= 2.5636E+04 J, S= 7.034E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.8494E-01  0.95000 -4.8806E+00  7.5921E-03  SER (default)   
+NB                1.5055E-02  0.05000 -2.3452E+01  6.5325E-11  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.536E-02  0.00E+00  9.40E-01    1.00  0.00E+00  W:
+ AL     9.99938E-01  NB     6.16745E-05
+
+AL3NB................... E  2.615E-03  0.00E+00  1.50E-02    4.00  0.00E+00  W:
+ NB     5.34386E-01  AL     4.65614E-01
+
+FCC_A1.................. F  0.000E+00  0.00E+00  0.00E+00    1.00  0.00E+00  W:
+ AL     9.94843E-01  NB     5.15663E-03
+
+--->OC6:--->OC6:--->OC6:--->OC6:--->OC6:Gridmin:      64 points   4.90E-05 s and       0 clockcycles, T=  950.00
+ 3Y leaving global_gridmin
+Equilibrium result:  14 its,  1.3600E-04 s,      0 cc, GS= -4.0843637E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  4.6000E-05 s,      0 cc, GS= -4.8649876E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=.05, 4:<FCC_A1>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=   1059.66 K (   786.51 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.7975E+01 g, RT=   8.8106E+03 J/mol
+G= -4.86499E+04 J, G/N=-4.8650E+04 J/mol, H= 3.1643E+04 J, S= 7.577E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.8494E-01  0.95000 -5.3649E+00  4.6777E-03  SER (default)   
+NB                1.5055E-02  0.05000 -1.5781E+01  1.4015E-07  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.797E-02  0.00E+00  1.00E+00    1.00  0.00E+00  W:
+ AL     9.50000E-01  NB     5.00000E-02
+
+FCC_A1.................. F  0.000E+00  0.00E+00  0.00E+00    1.00  0.00E+00  W:
+ AL     7.86868E-01  NB     2.13132E-01
+
+--->OC6:--->OC6:--->OC6:--->OC6:3Y For B2_4SL   32 additional disordered gridpoints calculated
+Gridmin:    5024 points   2.74E-03 s and       3 clockcycles, T= 1450.00
+ 3Y leaving global_gridmin
+Equilibrium result:  15 its,  3.0820E-03 s,      3 cc, GS= -8.0352508E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  2.0000E-04 s,      0 cc, GS= -8.8486020E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+3Y For B2_4SL   32 additional disordered gridpoints calculated
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=.0516, 4:<AL3NB>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=   1544.20 K (  1271.05 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.8007E+01 g, RT=   1.2839E+04 J/mol
+G= -8.84860E+04 J, G/N=-8.8486E+04 J/mol, H= 4.6970E+04 J, S= 8.772E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.8444E-01  0.94840 -6.7743E+00  1.1428E-03  SER (default)   
+NB                1.5555E-02  0.05160 -1.4330E+01  5.9752E-07  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.801E-02  0.00E+00  1.00E+00    1.00  0.00E+00  W:
+ AL     9.48400E-01  NB     5.16000E-02
+
+AL3NB................... F  0.000E+00  0.00E+00  0.00E+00    4.00  0.00E+00  W:
+ NB     5.34330E-01  AL     4.65670E-01
+
+--->OC6:--->OC6:--->OC6:--->OC6:3Y For B2_4SL   32 additional disordered gridpoints calculated
+Gridmin:    5024 points   2.67E-03 s and       3 clockcycles, T=  940.00
+ 3Y leaving global_gridmin
+Equilibrium result:  12 its,  2.9340E-03 s,      3 cc, GS= -4.0553550E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  1.9400E-04 s,      0 cc, GS= -4.0167284E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+3Y For B2_4SL   32 additional disordered gridpoints calculated
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=.0516, 4:<FCC_A1>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=    934.51 K (   661.36 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.8007E+01 g, RT=   7.7700E+03 J/mol
+G= -4.01673E+04 J, G/N=-4.0167E+04 J/mol, H= 2.5528E+04 J, S= 7.030E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.8444E-01  0.94840 -4.8806E+00  7.5921E-03  SER (default)   
+NB                1.5555E-02  0.05160 -2.3452E+01  6.5325E-11  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.531E-02  0.00E+00  9.38E-01    1.00  0.00E+00  W:
+ AL     9.99938E-01  NB     6.16745E-05
+
+AL3NB................... E  2.701E-03  0.00E+00  1.55E-02    4.00  0.00E+00  W:
+ NB     5.34386E-01  AL     4.65614E-01
+
+FCC_A1.................. F  0.000E+00  0.00E+00  0.00E+00    1.00  0.00E+00  W:
+ AL     9.94843E-01  NB     5.15663E-03
+
+--->OC6:--->OC6:--->OC6:--->OC6:--->OC6:Gridmin:      64 points   3.60E-05 s and       0 clockcycles, T=  950.00
+ 3Y leaving global_gridmin
+Equilibrium result:  14 its,  1.9900E-04 s,      1 cc, GS= -4.0903644E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  3.8000E-05 s,      1 cc, GS= -4.8849245E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=.0516, 4:<FCC_A1>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=   1061.69 K (   788.54 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.8007E+01 g, RT=   8.8274E+03 J/mol
+G= -4.88492E+04 J, G/N=-4.8849E+04 J/mol, H= 3.1668E+04 J, S= 7.584E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.8444E-01  0.94840 -5.3727E+00  4.6418E-03  SER (default)   
+NB                1.5555E-02  0.05160 -1.5732E+01  1.4710E-07  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.801E-02  0.00E+00  1.00E+00    1.00  0.00E+00  W:
+ AL     9.48400E-01  NB     5.16000E-02
+
+FCC_A1.................. F  0.000E+00  0.00E+00  0.00E+00    1.00  0.00E+00  W:
+ AL     7.84880E-01  NB     2.15120E-01
+
+--->OC6:--->OC6:--->OC6:--->OC6:3Y For B2_4SL   32 additional disordered gridpoints calculated
+Gridmin:    5024 points   3.10E-03 s and       3 clockcycles, T= 1450.00
+ 3Y leaving global_gridmin
+Equilibrium result:  15 its,  3.6980E-03 s,      3 cc, GS= -8.2354805E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:  16 its,  4.5100E-04 s,      1 cc, GS= -1.0189637E+05 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+3Y For B2_4SL   32 additional disordered gridpoints calculated
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=0.1101, 4:<AL3NB>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=   1675.20 K (  1402.05 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.9269E+01 g, RT=   1.3928E+04 J/mol
+G= -1.01896E+05 J, G/N=-1.0190E+05 J/mol, H= 4.9631E+04 J, S= 9.045E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.6531E-01  0.88990 -7.1023E+00  8.2319E-04  SER (default)   
+NB                3.4685E-02  0.11010 -1.3254E+01  1.7527E-06  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.927E-02  0.00E+00  1.00E+00    1.00  0.00E+00  W:
+ AL     8.89900E-01  NB     1.10100E-01
+
+AL3NB................... F  0.000E+00  0.00E+00  0.00E+00    4.00  0.00E+00  W:
+ NB     5.34337E-01  AL     4.65663E-01
+
+--->OC6:--->OC6:--->OC6:--->OC6:3Y For B2_4SL   32 additional disordered gridpoints calculated
+Gridmin:    5024 points   4.01E-03 s and       4 clockcycles, T=  940.00
+ 3Y leaving global_gridmin
+Equilibrium result:  12 its,  4.2860E-03 s,      4 cc, GS= -4.3305983E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  1.9800E-04 s,      0 cc, GS= -4.2927677E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+3Y For B2_4SL   32 additional disordered gridpoints calculated
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=0.1101, 4:<FCC_A1>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+STOP Au revoir
+T=    934.51 K (   661.36 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.9269E+01 g, RT=   7.7700E+03 J/mol
+G= -4.29277E+04 J, G/N=-4.2928E+04 J/mol, H= 2.1412E+04 J, S= 6.885E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.6531E-01  0.88990 -4.8806E+00  7.5921E-03  SER (default)   
+NB                3.4685E-02  0.11010 -2.3452E+01  6.5325E-11  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.324E-02  0.00E+00  8.61E-01    1.00  0.00E+00  W:
+ AL     9.99938E-01  NB     6.16745E-05
+
+AL3NB................... E  6.028E-03  0.00E+00  3.47E-02    4.00  0.00E+00  W:
+ NB     5.34386E-01  AL     4.65614E-01
+
+FCC_A1.................. F  0.000E+00  0.00E+00  0.00E+00    1.00  0.00E+00  W:
+ AL     9.94843E-01  NB     5.15663E-03
+
+--->OC6:--->OC6:--->OC6:--->OC6:--->OC6:Gridmin:      64 points   7.10E-05 s and       0 clockcycles, T=  950.00
+ 3Y leaving global_gridmin
+Phase change iteration:     4  -LIQUID
+Equilibrium result:   9 its,  1.5100E-04 s,      0 cc, GS= -4.3091717E+04 J/mol
+--->OC6:--->OC6:--->OC6:Warning: global minimizer cannot be used for the current set of conditions
+Equilibrium result:   9 its,  4.1000E-05 s,      0 cc, GS= -5.5150379E+04 J/mol
+3Y Testing if any gridpoint is below the calculated equilibrium
+--->OC6:
+Output for equilibrium:   1, DEFAULT_EQUILIBRIUM          2026.10.03
+Conditions .................................................:
+  1:P=100000, 2:N=1, 3:W(NB)=0.1101, 4:<FCC_A1>=0
+ Degrees of freedom are   0
+
+Some global data, reference state SER ......................:
+T=   1122.16 K (   849.01 C), P=  1.0000E+05 Pa, V=  0.0000E+00 m3
+N=   1.0000E+00 moles, B=   2.9269E+01 g, RT=   9.3302E+03 J/mol
+G= -5.51504E+04 J, G/N=-5.5150E+04 J/mol, H= 3.2107E+04 J, S= 7.776E+01 J/K
+
+Some data for components ...................................:
+Component name    Moles      Mass-fr  Chem.pot/RT  Activities  Ref.state
+AL                9.6531E-01  0.88990 -5.6040E+00  3.6829E-03  SER (default)   
+NB                3.4685E-02  0.11010 -1.4453E+01  5.2863E-07  SER (default)   
+
+Some data for phases .......................................:
+Name                Status Mass       Volume    Form.Units Cmp/FU dGm/RT  Comp:
+LIQUID.................. E  2.927E-02  0.00E+00  1.00E+00    1.00  0.00E+00  W:
+ AL     8.89900E-01  NB     1.10100E-01
+
+FCC_A1.................. F  0.000E+00  0.00E+00  0.00E+00    1.00  0.00E+00  W:
+ AL     7.29978E-01  NB     2.70022E-01
+
+--->OC6:

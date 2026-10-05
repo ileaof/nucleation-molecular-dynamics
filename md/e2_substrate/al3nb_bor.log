@@ -1,0 +1,242 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Al3Nb D0_22 (I4/mmm), fcc Al and bcc Nb at 0 K: lattice and formation energy, Al-Nb MEAM 2022.
+units metal
+atom_style atomic
+boundary p p p
+variable ea equal 0
+# --- fcc Al
+lattice fcc 4.016
+Lattice spacing in x,y,z = 4.016 4.016 4.016
+region b block 0 4 0 4 0 4
+create_box 2 b
+Created orthogonal box = (0 0 0) to (16.064 16.064 16.064)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 256 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16.064 16.064 16.064)
+  create_atoms CPU = 0.004 seconds
+mass 1 26.982
+mass 2 92.906
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al Nb
+fix r all box/relax iso 0.0
+minimize 0 1e-10 10000 100000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.9
+  ghost atom cutoff = 8.9
+  binsize = 4.45, bins = 4 4 4
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair eam/fs, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+WARNING: Energy due to 1 extra global DOFs will be included in minimizer energies
+ (src/lammps-10Sep2025/src/min.cpp:222)
+Per MPI rank memory allocation (min/avg/max) = 4.536 | 4.536 | 4.536 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   0             -912.47249      0             -912.47249     -6.7966746      4145.3489    
+         3   0             -912.47249      0             -912.47249     -4.8073986e-11  4145.3167    
+Loop time of 0.0200742 on 1 procs for 3 steps with 256 atoms
+
+93.5% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+     -912.472494919819  -912.472494987742  -912.472494988456
+  Force two-norm initial, final = 0.052755587 4.2167333e-13
+  Force max component initial, final = 0.052755587 3.7314692e-13
+  Final line search alpha, max atom move = 1 3.7314692e-13
+  Iterations, force evaluations = 3 6
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.019089   | 0.019089   | 0.019089   |   0.0 | 95.09
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00022766 | 0.00022766 | 0.00022766 |   0.0 |  1.13
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0007577  |            |       |  3.77
+
+Nlocal:            256 ave         256 max         256 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2201 ave        2201 max        2201 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          22528 ave       22528 max       22528 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 22528
+Ave neighs/atom = 88
+Neighbor list builds = 0
+Dangerous builds = 0
+variable eAl equal pe/atoms
+variable aAl equal lx/4
+print "RESULT fcc_Al a=${aAl} E=${eAl}"
+RESULT fcc_Al a=4.01598959960438 E=-3.56434568354866
+clear
+  using 1 OpenMP thread(s) per MPI task
+# --- bcc Nb
+units metal
+atom_style atomic
+boundary p p p
+lattice bcc 3.26
+Lattice spacing in x,y,z = 3.26 3.26 3.26
+region b block 0 4 0 4 0 4
+create_box 2 b
+Created orthogonal box = (0 0 0) to (13.04 13.04 13.04)
+  1 by 1 by 1 MPI processor grid
+create_atoms 2 box
+Created 128 atoms
+  using lattice units in orthogonal box = (0 0 0) to (13.04 13.04 13.04)
+  create_atoms CPU = 0.002 seconds
+mass 1 26.982
+mass 2 92.906
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al Nb
+fix r all box/relax iso 0.0
+minimize 0 1e-10 10000 100000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.9
+  ghost atom cutoff = 8.9
+  binsize = 4.45, bins = 3 3 3
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair eam/fs, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+WARNING: Energy due to 1 extra global DOFs will be included in minimizer energies
+ (src/lammps-10Sep2025/src/min.cpp:222)
+Per MPI rank memory allocation (min/avg/max) = 4.505 | 4.505 | 4.505 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   0             -1026.8496      0             -1026.8496     -425.0522       2217.3425    
+         3   0             -1026.8497      0             -1026.8497     -3.0725449e-10  2216.8005    
+Loop time of 0.00392797 on 1 procs for 3 steps with 128 atoms
+
+93.7% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+     -1026.84963889394  -1026.84971077998  -1026.84971078021
+  Force two-norm initial, final = 1.7647612 1.2829315e-12
+  Force max component initial, final = 1.7647612 1.2754726e-12
+  Final line search alpha, max atom move = 1 1.2754726e-12
+  Iterations, force evaluations = 3 6
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0034977  | 0.0034977  | 0.0034977  |   0.0 | 89.05
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00010504 | 0.00010504 | 0.00010504 |   0.0 |  2.67
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0003252  |            |       |  8.28
+
+Nlocal:            128 ave         128 max         128 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           1601 ave        1601 max        1601 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          10752 ave       10752 max       10752 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 10752
+Ave neighs/atom = 84
+Neighbor list builds = 0
+Dangerous builds = 0
+variable eNb equal pe/atoms
+variable aNb equal lx/4
+print "RESULT bcc_Nb a=${aNb} E=${eNb}"
+RESULT bcc_Nb a=3.25973437845772 E=-8.02226336547043
+clear
+  using 1 OpenMP thread(s) per MPI task
+# --- Al3Nb D0_22: a = 3.841, c = 8.609 Å (experiment)
+units metal
+atom_style atomic
+boundary p p p
+lattice custom 1.0 a1 3.841 0 0 a2 0 3.841 0 a3 0 0 8.609         basis 0 0 0 basis 0.5 0.5 0.5         basis 0 0 0.5 basis 0.5 0.5 0 basis 0 0.5 0.25 basis 0.5 0 0.25 basis 0 0.5 0.75 basis 0.5 0 0.75
+Lattice spacing in x,y,z = 3.841 3.841 8.609
+region b block 0 4 0 4 0 2
+create_box 2 b
+Created orthogonal box = (0 0 0) to (15.364 15.364 17.218)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box basis 1 2 basis 2 2 basis 3 1 basis 4 1 basis 5 1 basis 6 1 basis 7 1 basis 8 1
+Created 256 atoms
+  using lattice units in orthogonal box = (0 0 0) to (15.364 15.364 17.218)
+  create_atoms CPU = 0.001 seconds
+mass 1 26.982
+mass 2 92.906
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al Nb
+fix r all box/relax aniso 0.0
+minimize 0 1e-10 10000 100000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.9
+  ghost atom cutoff = 8.9
+  binsize = 4.45, bins = 4 4 4
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair eam/fs, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+WARNING: Energy due to 3 extra global DOFs will be included in minimizer energies
+ (src/lammps-10Sep2025/src/min.cpp:222)
+Per MPI rank memory allocation (min/avg/max) = 4.536 | 4.536 | 4.536 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   0             -1274.3243      0             -1274.3243      12580.009      4064.3519    
+       586   0             -1278.1331      0             -1278.1331      1.9931706e-10  4136.2085    
+Loop time of 0.811988 on 1 procs for 586 steps with 256 atoms
+
+93.6% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+     -1274.32426787611   -1278.1331160339    -1278.133116034
+  Force two-norm initial, final = 118.79807 7.8273052e-12
+  Force max component initial, final = 74.842255 9.1242506e-13
+  Final line search alpha, max atom move = 1 9.1242506e-13
+  Iterations, force evaluations = 586 591
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.76218    | 0.76218    | 0.76218    |   0.0 | 93.87
+Neigh   | 0.0015473  | 0.0015473  | 0.0015473  |   0.0 |  0.19
+Comm    | 0.010556   | 0.010556   | 0.010556   |   0.0 |  1.30
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.03771    |            |       |  4.64
+
+Nlocal:            256 ave         256 max         256 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2201 ave        2201 max        2201 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          23552 ave       23552 max       23552 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 23552
+Ave neighs/atom = 92
+Neighbor list builds = 1
+Dangerous builds = 0
+variable eD equal pe/atoms
+variable a equal lx/4
+variable c equal lz/2
+group al type 1
+192 atoms in group al
+group nb type 2
+64 atoms in group nb
+print "RESULT Al3Nb_D022 a=${a} c=${c} E=${eD} nAl=$(count(al)) nNb=$(count(nb))"
+RESULT Al3Nb_D022 a=3.99160515976612 c=8.11254827800821 E=-4.9927074845078 nAl=192 nNb=64
+Total wall time: 0:00:19

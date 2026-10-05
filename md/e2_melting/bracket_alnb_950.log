@@ -1,0 +1,177 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Solid-liquid coexistence (NPH, x-y fixed at the solid lattice, z free): T relaxes to T_m.
+#   mpirun -np 16 lmp -in in.coexist -var pot alnb -var T0 930 -var seed 1
+# Pure Al, fcc [001] interface normal to z. Lengths Å, time ps, energy eV.
+variable pot   index alnb
+variable T0    index 930
+variable seed  index 4928459
+variable nx    index 10
+variable nz    index 30
+variable nprod index 100000
+variable neq   index 10000
+variable Tmelt index 1700
+variable ens   index nph
+if "${pot} == alnb" then "variable a0 equal 4.0447" else "variable a0 equal 4.05"
+variable a0 equal 4.0447
+
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc ${a0}
+lattice      fcc 4.0447
+Lattice spacing in x,y,z = 4.0447 4.0447 4.0447
+region       box block 0 ${nx} 0 ${nx} 0 ${nz}
+region       box block 0 6 0 ${nx} 0 ${nz}
+region       box block 0 6 0 6 0 ${nz}
+region       box block 0 6 0 6 0 24
+create_box   1 box
+Created orthogonal box = (0 0 0) to (24.2682 24.2682 97.0728)
+  1 by 1 by 4 MPI processor grid
+create_atoms 1 box
+Created 3456 atoms
+  using lattice units in orthogonal box = (0 0 0) to (24.2682 24.2682 97.0728)
+  create_atoms CPU = 0.006 seconds
+mass         1 26.982
+include      pot_${pot}.lmp
+include      pot_alnb.lmp
+# Fereidonnejad, Moghaddam, Moaddeli, Comput. Mater. Sci. 213 (2022) 111685 — 2NN MEAM Al-Nb (NIST IPR)
+pair_style meam
+pair_coeff * * ../../potentials/AlNb_Fereidonnejad2022/library.meam Al Nb ../../potentials/AlNb_Fereidonnejad2022/AlNb.meam Al
+timestep     0.002
+thermo_style custom step temp press pzz pe enthalpy lx ly lz
+thermo       1000
+
+# 1) solid at T0, zero stress
+velocity     all create ${T0} ${seed} mom yes rot yes dist gaussian
+velocity     all create 950 ${seed} mom yes rot yes dist gaussian
+velocity     all create 950 4928459 mom yes rot yes dist gaussian
+fix          eq all npt temp ${T0} ${T0} 0.2 aniso 0.0 0.0 2.0
+fix          eq all npt temp 950 ${T0} 0.2 aniso 0.0 0.0 2.0
+fix          eq all npt temp 950 950 0.2 aniso 0.0 0.0 2.0
+run          ${neq}
+run          5000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 7 28
+  2 neighbor lists, perpetual/occasional/extra = 2 0 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 9.98 | 9.98 | 9.98 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+         0   950            7897.5477      7566.6155     -11612.16      -10906.087      24.2682        24.2682        97.0728      
+      1000   982.47728     -1181.7518     -898.03506     -11072.103     -10678.705      24.867981      24.884502      99.399545    
+      2000   937.07974      281.0788      -44.259567     -11094.894     -10665.671      24.79482       24.870913      99.175633    
+      3000   937.42124      768.48532      1278.7712     -11105.496     -10657.57       24.812011      24.790717      99.240745    
+      4000   944.66318     -2203.5456     -2984.4534     -11089.82      -10752.435      24.865195      24.779901      99.708495    
+      5000   957.5747       1136.3006     -74.348962     -11094.851     -10623.877      24.820994      24.70826       99.612681    
+Loop time of 276 on 4 procs for 5000 steps with 3456 atoms
+
+Performance: 3.130 ns/day, 7.667 hours/ns, 18.116 timesteps/s, 62.609 katom-step/s
+92.7% CPU use with 4 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 239.72     | 244.57     | 246.85     |  18.2 | 88.61
+Neigh   | 1.4268     | 1.5071     | 1.5709     |   4.3 |  0.55
+Comm    | 20.18      | 22.234     | 26.858     |  57.2 |  8.06
+Output  | 0.0005306  | 0.0015341  | 0.0044743  |   4.3 |  0.00
+Modify  | 6.3547     | 6.6806     | 6.8771     |   8.1 |  2.42
+Other   |            | 1.008      |            |       |  0.37
+
+Nlocal:            864 ave         875 max         860 min
+Histogram: 3 0 0 0 0 0 0 0 0 1
+Nghost:           2565 ave        2569 max        2554 min
+Histogram: 1 0 0 0 0 0 0 0 0 3
+Neighs:        34136.8 ave       34640 max       33907 min
+Histogram: 1 2 0 0 0 0 0 0 0 1
+FullNghs:      68273.5 ave       69268 max       67854 min
+Histogram: 2 1 0 0 0 0 0 0 0 1
+
+Total # of neighbors = 273094
+Ave neighs/atom = 79.020255
+Neighbor list builds = 205
+Dangerous builds = 0
+unfix        eq
+write_data   solid_${pot}_${T0}.data
+write_data   solid_alnb_${T0}.data
+write_data   solid_alnb_950.data
+System init for write_data ...
+
+# 2) melt the upper half with the lower half frozen
+variable     zmid equal (zlo+zhi)/2
+region       up block INF INF INF INF ${zmid} INF units box
+region       up block INF INF INF INF 48.5364 INF units box
+group        liq region up
+1719 atoms in group liq
+group        sol subtract all liq
+1737 atoms in group sol
+velocity     sol set 0 0 0
+fix          freeze sol setforce 0 0 0
+fix          melt liq nvt temp ${Tmelt} ${Tmelt} 0.2
+fix          melt liq nvt temp 1700 ${Tmelt} 0.2
+fix          melt liq nvt temp 1700 1700 0.2
+run          ${neq}
+run          5000
+Per MPI rank memory allocation (min/avg/max) = 10.01 | 10.02 | 10.03 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+      5000   467.79233     -2688.0612     -3900.7265     -11094.851     -10988.433      24.820994      24.70826       99.612681    
+      6000   853.37297      28337.716      28440.333     -10779.749     -9318.1236      24.820994      24.70826       99.612681    
+      7000   835.48556      28388.481      27838.067     -10779.876     -9324.304       24.820994      24.70826       99.612681    
+      8000   814.48434      29283.716      29509.944     -10767.795     -9287.4667      24.820994      24.70826       99.612681    
+      9000   842.443        29803.34       31320.567     -10770.317     -9257.6888      24.820994      24.70826       99.612681    
+     10000   828.10879      27989.07       27631.079     -10782.31      -9345.2611      24.820994      24.70826       99.612681    
+Loop time of 216.787 on 4 procs for 5000 steps with 3456 atoms
+
+Performance: 3.985 ns/day, 6.022 hours/ns, 23.064 timesteps/s, 79.710 katom-step/s
+93.0% CPU use with 4 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 201.52     | 203.02     | 204.48     |   7.7 | 93.65
+Neigh   | 1.6838     | 1.7036     | 1.7254     |   1.2 |  0.79
+Comm    | 9.7649     | 11.247     | 12.776     |  33.3 |  5.19
+Output  | 0.0034996  | 0.0040944  | 0.0056737  |   1.4 |  0.00
+Modify  | 0.47482    | 0.52131    | 0.56321    |   5.5 |  0.24
+Other   |            | 0.2963     |            |       |  0.14
+
+Nlocal:            864 ave         894 max         841 min
+Histogram: 2 0 0 0 0 0 1 0 0 1
+Nghost:        2508.75 ave        2522 max        2492 min
+Histogram: 1 0 0 1 0 0 0 0 0 2
+Neighs:          34092 ave       35475 max       32949 min
+Histogram: 1 1 0 0 0 0 1 0 0 1
+FullNghs:        68184 ave       70924 max       66009 min
+Histogram: 2 0 0 0 0 0 0 1 0 1
+
+Total # of neighbors = 272736
+Ave neighs/atom = 78.916667
+Neighbor list builds = 273
+Dangerous builds = 0
+unfix        melt
+# 3) bring the liquid to T0 at fixed box (nvt thermostats the liq group itself;
+#    fix npt would thermostat the temperature of ALL atoms, frozen solid included)
+fix          cool liq nvt temp ${T0} ${T0} 0.2
+fix          cool liq nvt temp 950 ${T0} 0.2
+fix          cool liq nvt temp 950 950 0.2
+run          ${neq}
+run          5000
+Per MPI rank memory allocation (min/avg/max) = 10.01 | 10.02 | 10.03 Mbytes
+   Step          Temp          Press           Pzz           PotEng        Enthalpy          Lx             Ly             Lz      
+     10000   828.10879      27989.07       27631.079     -10782.31      -9345.2611      24.820994      24.70826       99.612681    
+     11000   481.58341      11137.72       10554.981     -10954.43      -10314.677      24.820994      24.70826       99.612681    
+     12000   462.22418      8742.4692      8450.1445     -10974.866     -10435.09       24.820994      24.70826       99.612681    
+     13000   474.52744      9325.8468      9746.3517     -10972.96

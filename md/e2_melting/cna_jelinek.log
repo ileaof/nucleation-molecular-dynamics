@@ -1,0 +1,64 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+variable pot index alnb
+if "${pot} == alnb" then "variable a0 equal 4.0447" else "variable a0 equal 4.05"
+variable a0 equal 4.05
+units metal
+atom_style atomic
+boundary p p p
+read_data coexist_${pot}_930.data
+read_data coexist_jelinek_930.data
+Reading data file ...
+  orthogonal box = (-0.20615686 -0.20522785 -4.9390552) to (24.506157 24.505228 102.13906)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  3456 atoms
+  reading velocities ...
+  3456 velocities
+  read_data CPU = 0.285 seconds
+include pot_${pot}.lmp
+include pot_jelinek.lmp
+# Jelinek et al., Phys. Rev. B 85 (2012) 245102 — MEAM Al-Si-Mg-Cu-Fe (LAMMPS distribution)
+pair_style meam
+pair_coeff * * ../../potentials/AlSiMgCuFe_Jelinek2012/library.meam AlS SiS MgS CuS FeS ../../potentials/AlSiMgCuFe_Jelinek2012/AlSiMgCuFe.meam AlS
+Reading MEAM library file ../../potentials/AlSiMgCuFe_Jelinek2012/library.meam with DATE: 2012-06-29
+Reading MEAM potential file ../../potentials/AlSiMgCuFe_Jelinek2012/AlSiMgCuFe.meam with DATE: 2012-06-29
+compute c all cna/atom $(0.854*v_a0)
+compute c all cna/atom 3.4586999999999998856
+variable isfcc atom c_c==1
+compute nf all reduce sum v_isfcc
+variable ffcc equal c_nf/atoms
+thermo_style custom step v_ffcc
+rerun coexist_${pot}_930.dump dump x y z
+rerun coexist_jelinek_930.dump dump x y z
+WARNING: No fixes with time integration, atoms won't move
+For more information see https://docs.lammps.org/err0028 (src/lammps-10Sep2025/src/verlet.cpp:60)
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 8 8 31
+  3 neighbor lists, perpetual/occasional/extra = 2 1 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+  (3) compute cna/atom, occasional, copy from (1)
+      attributes: full, newton on
+      pair build: copy
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 14.08 | 14.08 | 14.08 Mbytes
+   Step         v_ffcc    
+     25000   0.3515625    
+     50000   0.19097222   
+Loop time of 0.31253 on 1 procs for 2 steps with 3456 atoms
+
+Total wall time: 0:00:00

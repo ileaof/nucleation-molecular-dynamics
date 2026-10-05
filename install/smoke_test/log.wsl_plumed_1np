@@ -1,0 +1,86 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Smoke test: same input on Windows and WSL LAMMPS (installation check only, not a physical choice)
+# lmp -in in.smoke                    -> no PLUMED
+# lmp -in in.smoke -var plumed 1      -> with fix plumed (WSL build only)
+variable plumed index 0
+units        metal
+boundary     p p p
+lattice      fcc 4.05
+Lattice spacing in x,y,z = 4.05 4.05 4.05
+region       box block 0 5 0 5 0 5
+create_box   1 box
+Created orthogonal box = (0 0 0) to (20.25 20.25 20.25)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (20.25 20.25 20.25)
+  create_atoms CPU = 0.000 seconds
+mass         1 26.982
+pair_style   eam/fs
+pair_coeff   * * Al_mm.eam.fs Al
+Reading eam/fs potential file Al_mm.eam.fs with DATE: 2007-06-11
+velocity     all create 600.0 4928459 mom yes rot yes dist gaussian
+fix          1 all nve
+compute      q6 all orientorder/atom degrees 1 6 nnn 12 cutoff 3.5
+compute      q6m all reduce ave c_q6[1]
+if "${plumed} == 1" then "fix pl all plumed plumedfile plumed.smoke.dat outfile plumed.smoke.log"
+fix pl all plumed plumedfile plumed.smoke.dat outfile plumed.smoke.log
+thermo_style custom step temp pe ke etotal press c_q6m
+thermo_modify format float %20.12g
+thermo       20
+run          100
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.5
+  ghost atom cutoff = 8.5
+  binsize = 4.25, bins = 5 5 5
+  2 neighbor lists, perpetual/occasional/extra = 1 1 0
+  (1) pair eam/fs, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+  (2) compute orientorder/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.086 | 4.086 | 4.086 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng         Press          c_q6m     
+         0                   600       -1705.30401996         38.700487413       -1666.60353255        2293.60122996       0.574524259714
+        20         316.679633686       -1687.02213302         20.426093629       -1666.59603939        13085.0244235       0.559009719934
+        40         108.980149042       -1673.62151008        7.02930814375       -1666.59220194        20476.2324416       0.542925717416
+        60         289.196625647       -1685.25325714        18.6534172845       -1666.59983985        16241.1939851       0.548338734624
+        80         316.257648263       -1686.99584661        20.3988752265       -1666.59697138          15022.23792       0.557556385106
+       100         329.589612973         -1687.855521        21.2587977805       -1666.59672322        13835.2293858       0.560928809331
+Loop time of 0.220551 on 1 procs for 100 steps with 500 atoms
+
+Performance: 39.175 ns/day, 0.613 hours/ns, 453.411 timesteps/s, 226.705 katom-step/s
+88.5% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.084092   | 0.084092   | 0.084092   |   0.0 | 38.13
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00080434 | 0.00080434 | 0.00080434 |   0.0 |  0.36
+Output  | 0.0068852  | 0.0068852  | 0.0068852  |   0.0 |  3.12
+Modify  | 0.12847    | 0.12847    | 0.12847    |   0.0 | 58.25
+Other   |            | 0.0002946  |            |       |  0.13
+
+Nlocal:            500 ave         500 max         500 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2930 ave        2930 max        2930 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          35000 ave       35000 max       35000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:        70000 ave       70000 max       70000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 70000
+Ave neighs/atom = 140
+Neighbor list builds = 0
+Dangerous builds = 0
+Total wall time: 0:00:00

@@ -1,0 +1,3 @@
+# Mendelev, Kramer, Becker, Asta, Philos. Mag. 88 (2008) 1723 — EAM/FS Al (LAMMPS distribution, Al_mm.eam.fs)
+pair_style eam/fs
+pair_coeff * * ../../potentials/Al_Mendelev2008/Al_mm.eam.fs Al

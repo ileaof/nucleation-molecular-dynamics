@@ -1,0 +1,127 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Al3Nb energies: D0_22 at the experimental lattice (no relaxation, positions relaxed only), and L1_2.
+variable s index d022fixed
+units metal
+atom_style atomic
+boundary p p p
+if "${s} == l12" then "lattice custom 1.0 a1 4.0 0 0 a2 0 4.0 0 a3 0 0 4.0 basis 0 0 0 basis 0.5 0.5 0 basis 0.5 0 0.5 basis 0 0.5 0.5" else    "lattice custom 1.0 a1 3.841 0 0 a2 0 3.841 0 a3 0 0 8.609 basis 0 0 0 basis 0.5 0.5 0.5 basis 0 0 0.5 basis 0.5 0.5 0 basis 0 0.5 0.25 basis 0.5 0 0.25 basis 0 0.5 0.75 basis 0.5 0 0.75"
+lattice custom 1.0 a1 4.0 0 0 a2 0 4.0 0 a3 0 0 4.0 basis 0 0 0 basis 0.5 0.5 0 basis 0.5 0 0.5 basis 0 0.5 0.5
+Lattice spacing in x,y,z = 4 4 4
+region b block 0 4 0 4 0 4
+create_box 2 b
+Created orthogonal box = (0 0 0) to (16 16 16)
+  1 by 1 by 1 MPI processor grid
+if "${s} == l12" then "create_atoms 1 box basis 1 2 basis 2 1 basis 3 1 basis 4 1" else "create_atoms 1 box basis 1 2 basis 2 2 basis 3 1 basis 4 1 basis 5 1 basis 6 1 basis 7 1 basis 8 1"
+create_atoms 1 box basis 1 2 basis 2 1 basis 3 1 basis 4 1
+Created 256 atoms
+  using lattice units in orthogonal box = (0 0 0) to (16 16 16)
+  create_atoms CPU = 0.001 seconds
+mass 1 26.982
+mass 2 92.906
+pair_style meam
+pair_coeff * * ../../potentials/AlNb_Fereidonnejad2022/library.meam Al Nb ../../potentials/AlNb_Fereidonnejad2022/AlNb.meam Al Nb
+group nb type 2
+64 atoms in group nb
+run 0
+WARNING: No fixes with time integration, atoms won't move
+For more information see https://docs.lammps.org/err0028 (src/lammps-10Sep2025/src/verlet.cpp:60)
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 5 5 5
+  2 neighbor lists, perpetual/occasional/extra = 2 0 0
+  (1) pair meam, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair meam, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+Per MPI rank memory allocation (min/avg/max) = 9.207 | 9.207 | 9.207 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   0             -1109.746       0             -1109.746       89801.052    
+Loop time of 4.345e-06 on 1 procs for 0 steps with 256 atoms
+
+92.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 4.345e-06  |            |       |100.00
+
+Nlocal:            256 ave         256 max         256 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           1431 ave        1431 max        1431 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          11008 ave       11008 max       11008 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:        22016 ave       22016 max       22016 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 22016
+Ave neighs/atom = 86
+Neighbor list builds = 0
+Dangerous builds = 0
+variable e0 equal pe/atoms
+print "RESULT ${s} unrelaxed E=${e0} xNb=$(count(nb)/atoms)"
+RESULT l12 unrelaxed E=-4.33494542303546 xNb=0.25
+if "${s} == l12" then "fix r all box/relax iso 0.0"
+fix r all box/relax iso 0.0
+minimize 0 1e-10 10000 100000
+WARNING: Energy due to 1 extra global DOFs will be included in minimizer energies
+ (src/lammps-10Sep2025/src/min.cpp:222)
+Per MPI rank memory allocation (min/avg/max) = 10.33 | 10.33 | 10.33 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   0             -1109.746       0             -1109.746       89801.052      4096         
+       277   0             -1118.8017      0             -1118.8017      6.6925927e-11  4442.4081    
+Loop time of 2.93353 on 1 procs for 277 steps with 256 atoms
+
+93.5% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+     -1109.74602829708   -1118.8016723723  -1118.80167237233
+  Force two-norm initial, final = 688.73518 9.0041227e-13
+  Force max component initial, final = 688.73518 5.4183982e-13
+  Final line search alpha, max atom move = 1 5.4183982e-13
+  Iterations, force evaluations = 277 280
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.8813     | 2.8813     | 2.8813     |   0.0 | 98.22
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.0070111  | 0.0070111  | 0.0070111  |   0.0 |  0.24
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.04527    |            |       |  1.54
+
+Nlocal:            256 ave         256 max         256 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           1431 ave        1431 max        1431 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          11008 ave       11008 max       11008 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:        22016 ave       22016 max       22016 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 22016
+Ave neighs/atom = 86
+Neighbor list builds = 0
+Dangerous builds = 0
+variable e1 equal pe/atoms
+print "RESULT ${s} relaxed E=$(pe/atoms) a=$(lx/4) c=$(lz/4)"
+RESULT l12 relaxed E=-4.370319032704406581 a=4.1097256189830071449 c=4.1097256189830071449
+Total wall time: 0:00:03

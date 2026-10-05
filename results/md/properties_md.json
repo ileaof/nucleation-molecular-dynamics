@@ -1,0 +1,50 @@
+{
+  "_note": "MD values, Borovikov et al. 2024 EAM/FS (Al). null = still running. Source files in md/e2_melting/.",
+  "potential": "Borovikov et al., Int. J. Plast. 178 (2024) 104004 (EAM/FS)",
+  "T_m_K": {
+    "value": 936,
+    "unc": 3,
+    "source": "isothermal coexistence, md/e2_melting/E2_results.md"
+  },
+  "dH_m_J_per_kg": {
+    "value": 325500,
+    "source": "NPT enthalpy difference at 935 K"
+  },
+  "rho_s_Tm": {
+    "value": 2551.5,
+    "T": 935
+  },
+  "rho_l_Tm": {
+    "value": 2397.9,
+    "T": 935
+  },
+  "rho_s_Tsol": {
+    "value": 2587.4,
+    "T": 798.15,
+    "source": "NPT, 2048 atoms, 30 ps"
+  },
+  "rho_l_Tsol": {
+    "value": 2443.5,
+    "T": 798.15,
+    "source": "NPT undercooled liquid, 2048 atoms, 30 ps (no crystallization)"
+  },
+  "gamma0_J_per_m2": {
+    "value": 0.106,
+    "unc": 0.004,
+    "source": "capillary fluctuation, 3 orientations, Morris order parameter; statistical error only",
+    "eps1": 0.033,
+    "eps2": -0.001
+  },
+  "Gamma_2nd_mK": {
+    "value": null,
+    "source": "seeding + NEMD (GPU stage)"
+  },
+  "rho_s_817": {
+    "value": 2582.5,
+    "T": 817.75
+  },
+  "rho_l_817": {
+    "value": 2436.9,
+    "T": 817.75
+  }
+}

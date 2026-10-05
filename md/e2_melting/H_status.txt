@@ -1,0 +1,3 @@
+solid exit=0
+liquid exit=0
+DONE
