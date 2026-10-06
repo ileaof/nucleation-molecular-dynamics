@@ -1,0 +1,453 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+package gpu 1
+# E4 — seeding at zero thermal-field gradient: a spherical fcc seed of radius R in undercooled liquid Al at T.
+# The seed grows if R > r_c(T) and melts if R < r_c(T); bracketing T for each R gives ΔT(r_c) and the
+# Gibbs–Thomson reference Γ = ΔT·r_c/2 at ∇T = 0 (baseline for the NEMD runs with an imposed gradient).
+#   lmp -sf gpu -pk gpu 1 -in in.seed -var pot borovikov -var T 820 -var R 20 -var seed 1
+# Lengths Å, time ps, energy eV. Solid atoms: ten Wolde q6 bonds (see below).
+variable pot   index borovikov
+variable T     index 820
+variable R     index 20          # seed radius [Å]
+variable n     index 32          # box = n fcc cells per side
+variable seed  index 1
+variable neq   index 5000        # 10 ps per preparation stage
+variable nprod index 30000       # 60 ps production
+variable ncool index 2500        # 5 ps quench of the liquid to T (short: the seed can already grow here)
+variable Tmelt index 1500
+variable qdot  index 0.5
+variable nbond index 7
+variable a0 equal 4.05
+if "${pot} == borovikov" then "variable a0 equal 4.016"
+variable a0 equal 4.016
+if "${pot} == mendelev" then "variable a0 equal 4.045"
+
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc ${a0}
+lattice      fcc 4.016
+Lattice spacing in x,y,z = 4.016 4.016 4.016
+region       box block 0 ${n} 0 ${n} 0 ${n}
+region       box block 0 32 0 ${n} 0 ${n}
+region       box block 0 32 0 32 0 ${n}
+region       box block 0 32 0 32 0 32
+create_box   1 box
+Created orthogonal box = (0 0 0) to (128.512 128.512 128.512)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 131072 atoms
+  using lattice units in orthogonal box = (0 0 0) to (128.512 128.512 128.512)
+  create_atoms CPU = 0.007 seconds
+mass         1 26.982
+include      ../e2_melting/pot_${pot}.lmp
+include      ../e2_melting/pot_borovikov.lmp
+# Borovikov, Mendelev, Zarkevich, Smith, Lawson, Int. J. Plast. 178 (2024) 104004 — EAM/FS Ni-Al-Nb (NIST IPR)
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al
+timestep     0.002
+thermo       500
+
+# 1) solid at T, zero stress: box at the solid density of T (the seed keeps this lattice)
+velocity     all create ${T} $(1000+v_seed) mom yes rot yes dist gaussian
+velocity     all create 830 $(1000+v_seed) mom yes rot yes dist gaussian
+velocity     all create 830 1001 mom yes rot yes dist gaussian
+fix          eq all npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0
+fix          eq all npt temp 830 ${T} 0.2 iso 0.0 0.0 2.0
+fix          eq all npt temp 830 830 0.2 iso 0.0 0.0 2.0
+run          ${neq}
+run          5000
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+
+- GPU package (short-range, long-range and three-body potentials): doi:10.1016/j.cpc.2010.12.021, doi:10.1016/j.cpc.2011.10.012, doi:10.1016/j.cpc.2013.08.002, doi:10.1016/j.commatsci.2014.10.068, doi:10.1016/j.cpc.2016.10.020, doi:10.3233/APC200086
+
+@Article{Brown11,
+ author = {W. M. Brown and P. Wang and S. J. Plimpton and A. N. Tharrington},
+ title = {Implementing Molecular Dynamics on Hybrid High Performance Computers---Short Range Forces},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2011,
+ volume =  182,
+ pages =   {898--911},
+ doi =     {10.1016/j.cpc.2010.12.021}
+}
+
+@Article{Brown12,
+ author = {W. M. Brown and A. Kohlmeyer and S. J. Plimpton and A. N. Tharrington},
+ title = {Implementing Molecular Dynamics on Hybrid High Performance Computers - Particle-Particle Particle-Mesh},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2012,
+ volume =  183,
+ doi =     {10.1016/j.cpc.2011.10.012},
+ pages =   {449--459}
+}
+
+@Article{Brown13,
+ author = {W. M. Brown and Y. Masako},
+ title = {Implementing Molecular Dynamics on Hybrid High Performance Computers---Three-Body Potentials},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2013,
+ volume =  184,
+ pages =   {2785--2793},
+ doi =     {10.1016/j.cpc.2013.08.002},
+}
+
+@Article{Trung15,
+ author = {T. D. Nguyen and S. J. Plimpton},
+ title = {Accelerating Dissipative Particle Dynamics Simulations for Soft Matter Systems},
+ journal = {Comput.\ Mater.\ Sci.},
+ year =    2015,
+ doi =     {10.1016/j.commatsci.2014.10.068},
+ volume =  100,
+ pages =   {173--180}
+}
+
+@Article{Trung17,
+ author = {T. D. Nguyen},
+ title = {{GPU}-Accelerated {T}ersoff Potentials for Massively Parallel
+    Molecular Dynamics Simulations},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2017,
+ doi =     {10.1016/j.cpc.2016.10.020},
+ volume =  212,
+ pages =   {113--122}
+}
+
+@inproceedings{Nikolskiy19,
+ author = {V. Nikolskiy and V. Stegailov},
+ title = {{GPU} Acceleration of Four-Site Water Models in {LAMMPS}},
+ booktitle = {Proceedings of the International Conference on Parallel
+    Computing (ParCo 2019), Prague, Czech Republic},
+ doi =     {10.3233/APC200086},
+ year =    2019
+}
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Per MPI rank memory allocation (min/avg/max) = 36.82 | 36.82 | 36.82 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   830           -467185.92      0             -453123.84      7070.067       2122418.6    
+       500   540.70572     -458511.27      0             -449350.49      1302.194       2212380.1    
+      1000   715.53605     -455108.74      0             -442985.95      1218.7663      2246600      
+      1500   836.30985     -452274.44      0             -438105.47      327.81517      2276972.9    
+      2000   822.49663     -452595.42      0             -438660.47      271.28692      2274088.7    
+      2500   831.54429     -452414.32      0             -438326.09     -268.3381       2277119.9    
+      3000   834.59154     -452287.7       0             -438147.83     -179.93575      2277976.5    
+      3500   828.55165     -452442.62      0             -438405.09      175.52765      2275726.2    
+      4000   827.61717     -452442.59      0             -438420.89     -89.820274      2276232.2    
+      4500   832.43108     -452337.58      0             -438234.32     -92.392952      2277401      
+      5000   831.49154     -452370.18      0             -438282.84     -29.39163       2276910.2    
+Loop time of 50.4355 on 1 procs for 5000 steps with 131072 atoms
+
+Performance: 17.131 ns/day, 1.401 hours/ns, 99.137 timesteps/s, 12.994 Matom-step/s
+110.3% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 37.069     | 37.069     | 37.069     |   0.0 | 73.50
+Neigh   | 0.054822   | 0.054822   | 0.054822   |   0.0 |  0.11
+Comm    | 1.8376     | 1.8376     | 1.8376     |   0.0 |  3.64
+Output  | 0.0030574  | 0.0030574  | 0.0030574  |   0.0 |  0.01
+Modify  | 9.4008     | 9.4008     | 9.4008     |   0.0 | 18.64
+Other   |            | 2.071      |            |       |  4.11
+
+Nlocal:         131072 ave      131072 max      131072 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          63423 ave       63423 max       63423 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 225
+Dangerous builds = 0
+unfix        eq
+# Solid atoms by the ten Wolde criterion: q6 vectors over the 12 nearest neighbours; a bond i-j is solid-like
+# if q6(i)·q6(j) > qdot; an atom is solid if it has >= nbond such bonds. Cutoff 0.854·a(T) (between the 1st
+# and 2nd shells of the solid at T). CNA was tried and rejected: at 820 K it labels only 56 % of a perfect crystal.
+variable     aT equal (vol/(${n}^3))^(1/3)
+variable     aT equal (vol/(32^3))^(1/3)
+print        "lattice at T: a = $(v_aT:%.4f) A, neighbour cutoff = $(0.854*v_aT:%.4f) A"
+lattice at T: a = 4.1112 A, neighbour cutoff = 3.5109 A
+compute      q6 all orientorder/atom degrees 1 6 components 6 nnn 12 cutoff $(0.854*v_aT)
+compute      q6 all orientorder/atom degrees 1 6 components 6 nnn 12 cutoff 3.5109382484549294112
+compute      nb all coord/atom orientorder q6 ${qdot}
+compute      nb all coord/atom orientorder q6 0.5
+variable     issol atom c_nb>=${nbond}
+variable     issol atom c_nb>=7
+compute      nsol all reduce sum v_issol
+variable     Nsol equal c_nsol
+thermo_style custom step temp press pe vol v_Nsol
+run          0
+WARNING: No fixes with time integration, atoms won't move
+For more information see https://docs.lammps.org/err0028 (src/lammps-10Sep2025/src/verlet.cpp:60)
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.9
+  ghost atom cutoff = 8.9
+  binsize = 4.45, bins = 30 30 30
+  2 neighbor lists, perpetual/occasional/extra = 0 2 0
+  (1) compute orientorder/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) compute coord/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 47.2 | 47.2 | 47.2 Mbytes
+   Step          Temp          Press          PotEng         Volume         v_Nsol    
+      5000   831.49154     -29.391829     -452370.18      2276910.2      117333       
+Loop time of 1.29e-06 on 1 procs for 0 steps with 131072 atoms
+
+310.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 1.29e-06   |            |       |100.00
+
+Nlocal:         131072 ave      131072 max      131072 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          63426 ave       63426 max       63426 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:  2.22345e+07 ave 2.22345e+07 max 2.22345e+07 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 22234506
+Ave neighs/atom = 169.63582
+Neighbor list builds = 0
+Dangerous builds = 0
+
+# 2) melt everything outside the sphere with the seed frozen, then bring the liquid to T. Both stages at P = 0:
+#    only the liquid is integrated and dilated, and thermostat/barostat use the liquid temperature
+#    (fix npt on 'all' would thermostat the frozen seed too — HANDOFF §7; at fixed volume the liquid sits at
+#    the solid density, ~4 GPa, and crystallises on cooling).
+variable     xc equal (xlo+xhi)/2
+variable     yc equal (ylo+yhi)/2
+variable     zc equal (zlo+zhi)/2
+region       ball sphere ${xc} ${yc} ${zc} ${R} units box
+region       ball sphere 64.2559999999997 ${yc} ${zc} ${R} units box
+region       ball sphere 64.2559999999997 64.2559999999997 ${zc} ${R} units box
+region       ball sphere 64.2559999999997 64.2559999999997 64.2559999999997 ${R} units box
+region       ball sphere 64.2559999999997 64.2559999999997 64.2559999999997 25 units box
+group        sol region ball
+3771 atoms in group sol
+group        liq subtract all sol
+127301 atoms in group liq
+compute      tliq liq temp
+velocity     sol set 0 0 0
+fix          freeze sol setforce 0 0 0
+velocity     liq create ${Tmelt} $(2000+v_seed) mom yes rot yes dist gaussian
+velocity     liq create 1500 $(2000+v_seed) mom yes rot yes dist gaussian
+velocity     liq create 1500 2001 mom yes rot yes dist gaussian
+fix          melt liq npt temp ${Tmelt} ${Tmelt} 0.2 iso 0.0 0.0 2.0 dilate liq
+fix          melt liq npt temp 1500 ${Tmelt} 0.2 iso 0.0 0.0 2.0 dilate liq
+fix          melt liq npt temp 1500 1500 0.2 iso 0.0 0.0 2.0 dilate liq
+fix_modify   melt temp tliq
+WARNING: Temperature for fix modify is not for group all (src/lammps-10Sep2025/src/fix_nh.cpp:1402)
+run          ${neq}
+run          5000
+Per MPI rank memory allocation (min/avg/max) = 266.7 | 266.7 | 266.7 Mbytes
+   Step          Temp          Press          PotEng         Volume         v_Nsol    
+      5000   1456.844       4940.7561     -452370.18      2276910.2      117333       
+      5500   1222.2385      4542.6853     -441906.63      2371906.8      45804        
+      6000   1304.3617      7107.8887     -435038.43      2441543.9      8651         
+      6500   1356.4314      7491.8124     -427852.59      2535036        2934         
+      7000   1458.0449      2996.6061     -423778.96      2604874.8      2602         
+      7500   1459.5598     -188.49166     -423052.49      2629224.3      2508         
+      8000   1450.387       36.490756     -422858.29      2630571.6      2491         
+      8500   1459.0148     -24.738056     -422957.14      2630573.2      2512         
+      9000   1457.8707      54.910337     -422973.08      2629690.9      2517         
+      9500   1455.9345      161.57511     -422916.28      2629622.4      2521         
+     10000   1457.0796     -35.951863     -422866.08      2631016.6      2484         
+Loop time of 60.0993 on 1 procs for 5000 steps with 131072 atoms
+
+Performance: 14.376 ns/day, 1.669 hours/ns, 83.196 timesteps/s, 10.905 Matom-step/s
+110.3% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 35.176     | 35.176     | 35.176     |   0.0 | 58.53
+Neigh   | 0.34091    | 0.34091    | 0.34091    |   0.0 |  0.57
+Comm    | 2.0949     | 2.0949     | 2.0949     |   0.0 |  3.49
+Output  | 7.9576     | 7.9576     | 7.9576     |   0.0 | 13.24
+Modify  | 12.258     | 12.258     | 12.258     |   0.0 | 20.40
+Other   |            | 2.272      |            |       |  3.78
+
+Nlocal:         131072 ave      131072 max      131072 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          57225 ave       57225 max       57225 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:  1.91458e+07 ave 1.91458e+07 max 1.91458e+07 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 19145838
+Ave neighs/atom = 146.07115
+Neighbor list builds = 327
+Dangerous builds = 0
+unfix        melt
+fix          cool liq npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0 dilate liq
+fix          cool liq npt temp 830 ${T} 0.2 iso 0.0 0.0 2.0 dilate liq
+fix          cool liq npt temp 830 830 0.2 iso 0.0 0.0 2.0 dilate liq
+fix_modify   cool temp tliq
+WARNING: Temperature for fix modify is not for group all (src/lammps-10Sep2025/src/fix_nh.cpp:1402)
+run          ${ncool}
+run          2500
+Per MPI rank memory allocation (min/avg/max) = 266.8 | 266.8 | 266.8 Mbytes
+   Step          Temp          Press          PotEng         Volume         v_Nsol    
+     10000   1457.0796     -35.951943     -422866.08      2631016.6      2484         
+     10500   1084.9523     -4086.4457     -431374.93      2539795.4      2661         
+     11000   881.20449     -2225.7075     -438098.27      2455454.3      2867         
+     11500   799.60491     -205.40558     -441351.52      2414352.1      2983         
+     12000   807.9319      -158.50736     -441513.25      2411654.4      3163         
+     12500   806.68961      111.02035     -441717.23      2409027.2      3270         
+Loop time of 30.3022 on 1 procs for 2500 steps with 131072 atoms
+
+Performance: 14.256 ns/day, 1.683 hours/ns, 82.502 timesteps/s, 10.814 Matom-step/s
+110.5% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 17.937     | 17.937     | 17.937     |   0.0 | 59.19
+Neigh   | 0.14148    | 0.14148    | 0.14148    |   0.0 |  0.47
+Comm    | 0.98205    | 0.98205    | 0.98205    |   0.0 |  3.24
+Output  | 4.0084     | 4.0084     | 4.0084     |   0.0 | 13.23
+Modify  | 6.0904     | 6.0904     | 6.0904     |   0.0 | 20.10
+Other   |            | 1.143      |            |       |  3.77
+
+Nlocal:         131072 ave      131072 max      131072 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          59255 ave       59255 max       59255 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:  2.07965e+07 ave 2.07965e+07 max 2.07965e+07 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20796521
+Ave neighs/atom = 158.66486
+Neighbor list builds = 131
+Dangerous builds = 0
+unfix        cool
+unfix        freeze
+
+# 3) production: everything free, NPT iso at T
+velocity     sol create ${T} $(3000+v_seed) mom yes rot yes dist gaussian
+velocity     sol create 830 $(3000+v_seed) mom yes rot yes dist gaussian
+velocity     sol create 830 3001 mom yes rot yes dist gaussian
+fix          prod all npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0
+fix          prod all npt temp 830 ${T} 0.2 iso 0.0 0.0 2.0
+fix          prod all npt temp 830 830 0.2 iso 0.0 0.0 2.0
+run          ${nprod}
+run          30000
+Per MPI rank memory allocation (min/avg/max) = 266.8 | 266.8 | 266.8 Mbytes
+   Step          Temp          Press          PotEng         Volume         v_Nsol    
+     12500   830.56293      290.35399     -441717.23      2409027.2      3270         
+     13000   829.74646     -193.76475     -441672.99      2410704.2      3009         
+     13500   828.99882      273.51914     -441707.71      2408977.1      3041         
+     14000   830.33559     -317.4966      -441679.14      2411335.2      2987         
+     14500   830.82078      312.04947     -441720.85      2408799.2      3070         
+     15000   828.93472     -412.08364     -441684.72      2411509.9      3040         
+     15500   837.08851      219.94148     -441733.71      2409214.3      3003         
+     16000   829.40508     -164.13327     -441600.23      2411353.3      3050         
+     16500   830.92646      66.450113     -441765.35      2409411        3061         
+     17000   829.24743     -13.851283     -441688.32      2409994        3059         
+     17500   828.73882      118.72547     -441713.17      2409461.7      3195         
+     18000   831.2538      -74.578204     -441626.58      2410935.5      2994         
+     18500   829.9534      -55.466007     -441682.28      2410174.9      3065         
+     19000   831.67145     -138.7829      -441759.04      2409428        3136         
+     19500   831.55829     -218.82029     -441668.17      2410908.9      3014         
+     20000   829.90351     -9.6586697     -441678.4       2409868.9      3025         
+     20500   830.58434     -20.669507     -441722.81      2409730.4      2948         
+     21000   825.85497     -107.9765      -441757.07      2409858.1      2950         
+     21500   832.05545     -3.5732692     -441612.76      2410874.3      2911         
+     22000   829.34416     -96.532555     -441699.19      2410166.9      3077         
+     22500   830.0105       74.977282     -441644.81      2410248.2      2891         
+     23000   830.60455      72.359485     -441601.37      2410592.2      2934         
+     23500   828.16777     -249.09851     -441635.18      2411124.1      3022         
+     24000   830.742        75.009768     -441747.04      2409258.8      3185         
+     24500   830.98953     -244.11362     -441726.62      2410222.7      3049         
+     25000   828.47866     -15.561453     -441730.57      2409814.6      3094         
+     25500   829.13481      69.07559      -441627.37      2410362.9      3135         
+     26000   830.85981      103.32182     -441731.65      2409075.4      3101         
+     26500   827.30155     -64.521349     -441712.07      2409773.5      3255         
+     27000   829.63339     -45.299819     -441752.39      2409602.4      3146         
+     27500   833.82611     -168.17454     -441689.51      2410911.4      3239         
+     28000   830.45591      135.16401     -441695.14      2409407.4      3194         
+     28500   831.5927       130.96342     -441789.48      2408794.2      3292         
+     29000   831.46106     -224.21368     -441747.58      2409989.8      3457         
+     29500   831.54843      66.272281     -441801.07      2408848.6      3373         
+     30000   830.28392     -91.049698     -441778.57      2408940.2      3358         
+     30500   828.50409     -70.468763     -441704.37      2409946        3424         
+     31000   829.80704      70.29653      -441796.57      2408633.1      3485         
+     31500   826.5634       191.20921     -441698.19      2409338.2      3470         
+     32000   831.0688      -75.695751     -441669.77      2410270.8      3421         
+     32500   830.82838      218.4633      -441710.73      2408941.9      3561         
+     33000   831.66497     -179.75181     -441803.9       2409292.3      3586         
+     33500   829.2314       100.07645     -441791.03      2408690.4      3687         
+     34000   829.88715      198.32423     -441814.63      2408592.4      3682         
+     34500   828.68815     -25.289939     -441770.91      2409404.7      3843         
+     35000   832.32447     -69.350684     -441780.76      2409217.5      3818         
+     35500   830.21661     -142.28204     -441769.99      2409390.2      3802         
+     36000   832.46385      6.8445443     -441725.83      2409427.6      3730         
+     36500   827.23531     -299.3678      -441794.85      2409700.2      3793         
+     37000   833.45598      21.597298     -441809.26      2408347.2      3965         
+     37500   828.47562     -269.47872     -441758.93      2409662.7      3979         
+     38000   833.89089      233.56583     -441783.17      2408048        3929         
+     38500   829.47295     -181.90018     -441728.14      2409738.3      3914         
+     39000   832.36453     -164.78376     -441792.37      2409453.9      4008         
+     39500   827.6177       259.02194     -441819.25      2407637.8      3919         
+     40000   832.00882     -169.63748     -441815.7       2409323.1      3853         
+     40500   829.01903      236.82484     -441855.31      2407489.2      3831         
+     41000   827.62195      178.77848     -441773.25      2408486.1      3749         
+     41500   832.32257      104.37749     -441674.68      2409696.3      3788         
+     42000   830.44803     -107.47858     -441819.88      2408688.8      3799         
+     42500   830.2256       110.40641     -441766.67      2409379        3729         
+Loop time of 350.376 on 1 procs for 30000 steps with 131072 atoms
+
+Performance: 14.796 ns/day, 1.622 hours/ns, 85.622 timesteps/s, 11.223 Matom-step/s
+110.4% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 219.3      | 219.3      | 219.3      |   0.0 | 62.59
+Neigh   | 1.4521     | 1.4521     | 1.4521     |   0.0 |  0.41
+Comm    | 10.627     | 10.627     | 10.627     |   0.0 |  3.03
+Output  | 48.235     | 48.235     | 48.235     |   0.0 | 13.77
+Modify  | 58.228     | 58.228     | 58.228     |   0.0 | 16.62
+Other   |            | 12.54      |            |       |  3.58
+
+Nlocal:         131072 ave      131072 max      131072 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          59285 ave       59285 max       59285 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:  2.07913e+07 ave 2.07913e+07 max 2.07913e+07 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20791260
+Ave neighs/atom = 158.62473
+Neighbor list builds = 1428
+Dangerous builds = 0
+Total wall time: 0:08:18

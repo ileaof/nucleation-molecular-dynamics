@@ -1,0 +1,22 @@
+R=20 T=780 s=1 exit=0
+R=20 T=800 s=1 exit=0
+R=20 T=820 s=1 exit=0
+R=20 T=840 s=1 exit=0
+R=20 T=860 s=1 exit=0
+DONE R=20
+R=15 T=740 s=1 exit=0
+R=15 T=760 s=1 exit=0
+R=15 T=780 s=1 exit=0
+R=15 T=800 s=1 exit=0
+DONE R=15
+R=25 T=810 s=1 exit=0
+R=25 T=830 s=1 exit=0
+R=25 T=850 s=1 exit=0
+R=25 T=870 s=1 exit=0
+DONE R=25
+R=30 T=830 s=1 exit=0
+R=30 T=850 s=1 exit=0
+R=30 T=870 s=1 exit=0
+R=30 T=890 s=1 exit=0
+DONE R=30
+DONE ALL

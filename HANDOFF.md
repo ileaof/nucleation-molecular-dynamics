@@ -44,7 +44,8 @@ grandezas do modelo e validando a solução do contínuo.
 | Instalação LAMMPS+PLUMED (CPU, WSL) | **concluída na máquina antiga** | `install/` |
 | E2 — validação do potencial (Al) | **concluída para Borovikov 2024**; γ₀ abaixo da referência → teste de outros potenciais em aberto | `md/e2_melting/E2_results.md` |
 | Tabelas contínuo × MD (Al-Si-Mg-Fe) | **rascunho pronto**; coluna MD parcial | `results/tables/`, `scripts/make_tables_docx.py` |
-| E4+ — seeding, NEMD (Γ = A·∇T), PLUMED, FFS | **não iniciadas** (exigem GPU) | — |
+| E4 — seeding a ∇T = 0 (Gibbs–Thomson de referência) | **concluída** (Borovikov, 4 raios) | `md/e4_seeding/` |
+| E4 — NEMD (Γ = A·∇T), PLUMED, FFS | **não iniciadas**; definição de ∇T na MD pendente com o autor | — |
 
 ---
 
@@ -106,6 +107,25 @@ Tolerâncias aprovadas pelo autor: T_m ~1 %, ΔH_m ~10 %, ρ ~3 %. **γ₀ repro
 ---
 
 ## 4. Decisão pendente (próximo passo imediato)
+
+**E4, seeding a ∇T = 0 (2026-10-05, `md/e4_seeding/`, Borovikov):** núcleo esférico CFC de raio R em Al líquido sub-resfriado
+(131 072 átomos, NPT, 60 ps), sólido pelo critério de ten Wolde (q6·q6 > 0,5, ≥ 7 ligações; calibrado em `in.calib`: sólido
+85–93 %, líquido ≤ 0,01 %; o CNA reconhecia só 56 % do cristal a 820 K). T* por colchete de 20 K, 1 réplica:
+R = 15/20/25/30 Å → r_c = 1,44/1,92/2,41/2,91 nm, ΔT = 172,5/126,7/97,8/85,0 K → **Γ = ΔT·r_c/2 = 1,22 ± 0,03 ×10⁻⁷ m·K**,
+constante com r (Gibbs–Thomson vale na escala nm; coerente com γ₀/|ΔS_V| da E2). Com A = 4πr_c², Γ/A = 1,2–4,8 ×10⁹ K/m.
+**Autor (2026-10-05): testar (a) ΔT·r_c/2 = A·∇T total e (b) o deslocamento em relação a ∇T = 0; o ∇T é o LOCAL na
+interface do núcleo, rigidamente ligado ao sub-resfriamento, e altera a geometria do núcleo.**
+**E4 NEMD (`md/e4_nemd/`, 1ª série concluída 2026-10-06):** caixa 32×32×96 células (393 216 át.), placas Langevin fria/quente em L/4 e 3L/4,
+resto NVE; perfil linear imposto na preparação por Langevin local T(z) (variável por átomo) com o núcleo congelado; núcleo em L/2 a T₀.
+Saídas grandes em `~/runs/e4_nemd/<tag>` (WSL); `run_nemd.sh "R T0 G seed" …`, `analyze_all.sh` → `runs/<tag>/analysis.md`.
+Parcial (R = 20 Å, T₀ = 809 K, G = 0,24 K/Å = 2,4e9 K/m): (∇T)_z local na interface 1,66 ± 0,32 e 2,05 ± 0,32 ×10⁹ K/m
+(70–85 % do imposto); T_quente − T_fria na interface +5,3 K; controles G = 0: (∇T)_z = −0,2 ± 0,7 e +0,7 ± 0,6. A 809 K uma
+réplicas: a 809 K crescem 2/3 com G = 0 e 2/3 com G = 2,4e9 K/m; a 829 K (2) e 849 K (1) com gradiente fundem →
+T*(G = 2,4e9) ≈ T*(0) = 809 K dentro de ~±10 K. (∇T)_z local (3 réplicas, 809 K) 1,44–2,05 ×10⁹ K/m; A·(∇T)_z = 0,87–1,10 ×10⁻⁷ m·K
+contra ΔT·r/2 = 1,18–1,40 ×10⁻⁷ (r fora do crítico). Próximo: G = 0,48 K/Å e passos de T menores perto de T*. Ruído do ∇T local em janelas de 10 ps
+~1–3e9 K/m por componente: usar médias sobre janelas/réplicas e a projeção (∇T)_z, não |∇T|.
+Armadilhas: fundir/resfriar a P = 0 com o núcleo congelado (`fix npt liq … dilate liq` + `fix_modify temp`); com volume fixo o
+líquido fica a ~4 GPa e cristaliza; um cristal periódico a 1500 K nesse volume nem funde.
 
 **2026-10-04: o autor escolheu a opção 1 (NEP89 na GPU) — feita; resultados em `md/e2_nep89/E2_nep89_results.md`.
 Aguarda o veredito do autor sobre o potencial (NEP89 × Borovikov) antes da E4.**

@@ -1,0 +1,316 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+package gpu 1
+# Calibration of the ten Wolde solid criterion: fraction labelled solid in bulk solid and in bulk liquid at T,
+# for several (qdot, nbond). Same neighbour definition as in.seed (12 nearest, cutoff 0.854·a(T)).
+#   lmp -sf gpu -pk gpu 1 -in in.calib -var T 820 -var phase solid|liquid
+variable pot   index borovikov
+variable T     index 820
+variable phase index solid
+variable n     index 10
+variable seed  index 5
+variable a0 equal 4.016
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc ${a0}
+lattice      fcc 4.016
+Lattice spacing in x,y,z = 4.016 4.016 4.016
+region       box block 0 ${n} 0 ${n} 0 ${n}
+region       box block 0 10 0 ${n} 0 ${n}
+region       box block 0 10 0 10 0 ${n}
+region       box block 0 10 0 10 0 10
+create_box   1 box
+Created orthogonal box = (0 0 0) to (40.16 40.16 40.16)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 4000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (40.16 40.16 40.16)
+  create_atoms CPU = 0.001 seconds
+mass         1 26.982
+include      ../e2_melting/pot_${pot}.lmp
+include      ../e2_melting/pot_borovikov.lmp
+# Borovikov, Mendelev, Zarkevich, Smith, Lawson, Int. J. Plast. 178 (2024) 104004 — EAM/FS Ni-Al-Nb (NIST IPR)
+pair_style eam/fs
+pair_coeff * * ../../potentials/NiAlNb_Borovikov2024/Ni-Al-Nb.eam.fs Al
+timestep     0.002
+thermo       1000
+velocity     all create ${T} ${seed} mom yes rot yes dist gaussian
+velocity     all create 920 ${seed} mom yes rot yes dist gaussian
+velocity     all create 920 5 mom yes rot yes dist gaussian
+fix          eq all npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0
+fix          eq all npt temp 920 ${T} 0.2 iso 0.0 0.0 2.0
+fix          eq all npt temp 920 920 0.2 iso 0.0 0.0 2.0
+run          5000
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+
+- GPU package (short-range, long-range and three-body potentials): doi:10.1016/j.cpc.2010.12.021, doi:10.1016/j.cpc.2011.10.012, doi:10.1016/j.cpc.2013.08.002, doi:10.1016/j.commatsci.2014.10.068, doi:10.1016/j.cpc.2016.10.020, doi:10.3233/APC200086
+
+@Article{Brown11,
+ author = {W. M. Brown and P. Wang and S. J. Plimpton and A. N. Tharrington},
+ title = {Implementing Molecular Dynamics on Hybrid High Performance Computers---Short Range Forces},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2011,
+ volume =  182,
+ pages =   {898--911},
+ doi =     {10.1016/j.cpc.2010.12.021}
+}
+
+@Article{Brown12,
+ author = {W. M. Brown and A. Kohlmeyer and S. J. Plimpton and A. N. Tharrington},
+ title = {Implementing Molecular Dynamics on Hybrid High Performance Computers - Particle-Particle Particle-Mesh},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2012,
+ volume =  183,
+ doi =     {10.1016/j.cpc.2011.10.012},
+ pages =   {449--459}
+}
+
+@Article{Brown13,
+ author = {W. M. Brown and Y. Masako},
+ title = {Implementing Molecular Dynamics on Hybrid High Performance Computers---Three-Body Potentials},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2013,
+ volume =  184,
+ pages =   {2785--2793},
+ doi =     {10.1016/j.cpc.2013.08.002},
+}
+
+@Article{Trung15,
+ author = {T. D. Nguyen and S. J. Plimpton},
+ title = {Accelerating Dissipative Particle Dynamics Simulations for Soft Matter Systems},
+ journal = {Comput.\ Mater.\ Sci.},
+ year =    2015,
+ doi =     {10.1016/j.commatsci.2014.10.068},
+ volume =  100,
+ pages =   {173--180}
+}
+
+@Article{Trung17,
+ author = {T. D. Nguyen},
+ title = {{GPU}-Accelerated {T}ersoff Potentials for Massively Parallel
+    Molecular Dynamics Simulations},
+ journal = {Comput.\ Phys.\ Commun.},
+ year =    2017,
+ doi =     {10.1016/j.cpc.2016.10.020},
+ volume =  212,
+ pages =   {113--122}
+}
+
+@inproceedings{Nikolskiy19,
+ author = {V. Nikolskiy and V. Stegailov},
+ title = {{GPU} Acceleration of Four-Site Water Models in {LAMMPS}},
+ booktitle = {Proceedings of the International Conference on Parallel
+    Computing (ParCo 2019), Prague, Czech Republic},
+ doi =     {10.3233/APC200086},
+ year =    2019
+}
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Per MPI rank memory allocation (min/avg/max) = 3.044 | 3.044 | 3.044 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   920           -14257.383      0             -13781.825      7835.4357      64771.076    
+      1000   949.3102      -13710.644      0             -13219.935      449.26561      70396.122    
+      2000   908.68403     -13743.2        0             -13273.491      716.96527      70019.852    
+      3000   919.00036     -13742.471      0             -13267.429     -109.74552      70122.629    
+      4000   920.43543     -13734.746      0             -13258.963      83.028836      70206.197    
+      5000   905.10064     -13735.884      0             -13268.027      1933.5858      70029.689    
+Loop time of 2.57543 on 1 procs for 5000 steps with 4000 atoms
+
+Performance: 335.478 ns/day, 0.072 hours/ns, 1941.421 timesteps/s, 7.766 Matom-step/s
+100.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.2076     | 2.2076     | 2.2076     |   0.0 | 85.72
+Neigh   | 0.00061961 | 0.00061961 | 0.00061961 |   0.0 |  0.02
+Comm    | 0.099401   | 0.099401   | 0.099401   |   0.0 |  3.86
+Output  | 0.00039764 | 0.00039764 | 0.00039764 |   0.0 |  0.02
+Modify  | 0.22188    | 0.22188    | 0.22188    |   0.0 |  8.62
+Other   |            | 0.04553    |            |       |  1.77
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           8193 ave        8193 max        8193 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 197
+Dangerous builds = 0
+variable     aT equal (vol/(${n}^3))^(1/3)
+variable     aT equal (vol/(10^3))^(1/3)
+variable     rc equal $(0.854*v_aT)
+variable     rc equal 3.5200751597027233331
+if "${phase} == liquid" then "unfix eq" "fix m all npt temp 1500 1500 0.2 iso 0.0 0.0 2.0" "run 5000" "unfix m" "fix eq all npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0" "run 5000"
+unfix eq
+fix m all npt temp 1500 1500 0.2 iso 0.0 0.0 2.0
+run 5000
+Per MPI rank memory allocation (min/avg/max) = 3.044 | 3.044 | 3.044 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+      5000   905.10064     -13735.884      0             -13268.027      1933.5866      70029.689    
+      6000   1413.2004     -13006.665      0             -12276.165      2901.6772      78431.53     
+      7000   1506.4754     -12884.198      0             -12105.484     -1206.659       80749.393    
+      8000   1498.6982     -12870.25       0             -12095.556     -1098.1953      80897.285    
+      9000   1506.7331     -12885.314      0             -12106.466     -1228.1843      80751.625    
+     10000   1486.0505     -12860.489      0             -12092.333     -534.85598      80866.508    
+Loop time of 2.47703 on 1 procs for 5000 steps with 4000 atoms
+
+Performance: 348.805 ns/day, 0.069 hours/ns, 2018.546 timesteps/s, 8.074 Matom-step/s
+97.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1062     | 2.1062     | 2.1062     |   0.0 | 85.03
+Neigh   | 0.00087961 | 0.00087961 | 0.00087961 |   0.0 |  0.04
+Comm    | 0.10136    | 0.10136    | 0.10136    |   0.0 |  4.09
+Output  | 0.00033527 | 0.00033527 | 0.00033527 |   0.0 |  0.01
+Modify  | 0.22202    | 0.22202    | 0.22202    |   0.0 |  8.96
+Other   |            | 0.04624    |            |       |  1.87
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           7269 ave        7269 max        7269 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 273
+Dangerous builds = 0
+unfix m
+fix eq all npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0
+fix eq all npt temp 920 ${T} 0.2 iso 0.0 0.0 2.0
+fix eq all npt temp 920 920 0.2 iso 0.0 0.0 2.0
+run 5000
+Per MPI rank memory allocation (min/avg/max) = 3.044 | 3.044 | 3.044 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+     10000   1486.0505     -12860.489      0             -12092.333     -534.85636      80866.508    
+     11000   908.56424     -13387.065      0             -12917.418      1023.9015      74424.594    
+     12000   901.49975     -13381.672      0             -12915.677      1491.0696      74399.505    
+     13000   940.3621      -13386.735      0             -12900.651     -162.72763      74545.755    
+     14000   940.11726     -13370.868      0             -12884.911     -599.52863      74803.499    
+     15000   907.76839     -13375.616      0             -12906.38       2156.0059      74519.036    
+Loop time of 2.53578 on 1 procs for 5000 steps with 4000 atoms
+
+Performance: 340.723 ns/day, 0.070 hours/ns, 1971.778 timesteps/s, 7.887 Matom-step/s
+100.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1665     | 2.1665     | 2.1665     |   0.0 | 85.44
+Neigh   | 0.00069021 | 0.00069021 | 0.00069021 |   0.0 |  0.03
+Comm    | 0.097938   | 0.097938   | 0.097938   |   0.0 |  3.86
+Output  | 0.00094982 | 0.00094982 | 0.00094982 |   0.0 |  0.04
+Modify  | 0.22307    | 0.22307    | 0.22307    |   0.0 |  8.80
+Other   |            | 0.04659    |            |       |  1.84
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           7563 ave        7563 max        7563 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 217
+Dangerous builds = 0
+compute      q6 all orientorder/atom degrees 1 6 components 6 nnn 12 cutoff ${rc}
+compute      q6 all orientorder/atom degrees 1 6 components 6 nnn 12 cutoff 3.52007515970272
+compute      b5 all coord/atom orientorder q6 0.5
+compute      b6 all coord/atom orientorder q6 0.6
+compute      b7 all coord/atom orientorder q6 0.7
+variable     s5_6 atom c_b5>=6
+variable     s5_7 atom c_b5>=7
+variable     s5_8 atom c_b5>=8
+variable     s6_6 atom c_b6>=6
+variable     s6_7 atom c_b6>=7
+variable     s6_8 atom c_b6>=8
+variable     s7_6 atom c_b7>=6
+variable     s7_7 atom c_b7>=7
+compute      f all reduce ave v_s5_6 v_s5_7 v_s5_8 v_s6_6 v_s6_7 v_s6_8 v_s7_6 v_s7_7
+fix          avg all ave/time 500 20 10000 c_f[*] file calib_${phase}_${T}.txt
+fix          avg all ave/time 500 20 10000 c_f[*] file calib_liquid_${T}.txt
+fix          avg all ave/time 500 20 10000 c_f[*] file calib_liquid_920.txt
+thermo_style custom step temp press pe c_f[1] c_f[2] c_f[3] c_f[5] c_f[6]
+run          10000
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.9
+  ghost atom cutoff = 8.9
+  binsize = 4.45, bins = 10 10 10
+  4 neighbor lists, perpetual/occasional/extra = 0 4 0
+  (1) compute orientorder/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (2) compute coord/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (3) compute coord/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (4) compute coord/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 6.416 | 6.416 | 6.416 Mbytes
+   Step          Temp          Press          PotEng         c_f[1]         c_f[2]         c_f[3]         c_f[5]         c_f[6]    
+     15000   907.76839      2156.0058     -13375.616      0              0              0              0              0            
+     16000   904.82864      758.21771     -13376.465      0.0005         0              0              0              0            
+     17000   929.50442      41.028109     -13375.443      0              0              0              0              0            
+     18000   923.53934     -2389.5871     -13376.786      0.00025        0              0              0              0            
+     19000   930.12875     -171.20038     -13379.051      0              0              0              0              0            
+     20000   935.10259     -32.957925     -13378.595      0.00025        0              0              0              0            
+     21000   946.81771      2338.3795     -13372.142      0              0              0              0              0            
+     22000   898.84875     -1359.1538     -13365.665      0              0              0              0              0            
+     23000   916.26116     -907.68701     -13382.213      0.0005         0.00025        0.00025        0              0            
+     24000   931.86678      878.09559     -13382.184      0              0              0              0              0            
+     25000   935.9841       1339.8955     -13375.774      0.00025        0              0              0              0            
+Loop time of 5.80791 on 1 procs for 10000 steps with 4000 atoms
+
+Performance: 297.525 ns/day, 0.081 hours/ns, 1721.789 timesteps/s, 6.887 Matom-step/s
+100.8% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 4.2682     | 4.2682     | 4.2682     |   0.0 | 73.49
+Neigh   | 0.021222   | 0.021222   | 0.021222   |   0.0 |  0.37
+Comm    | 0.19337    | 0.19337    | 0.19337    |   0.0 |  3.33
+Output  | 0.29639    | 0.29639    | 0.29639    |   0.0 |  5.10
+Modify  | 0.93603    | 0.93603    | 0.93603    |   0.0 | 16.12
+Other   |            | 0.09271    |            |       |  1.60
+
+Nlocal:           4000 ave        4000 max        4000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           7544 ave        7544 max        7544 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:       627084 ave      627084 max      627084 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 627084
+Ave neighs/atom = 156.771
+Neighbor list builds = 421
+Dangerous builds = 0
+Total wall time: 0:00:16
