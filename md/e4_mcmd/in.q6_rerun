@@ -1,0 +1,15 @@
+# Solid atoms (ten Wolde: q6·q6 > 0.5 with the 12 nearest neighbours, >= 7 such bonds) in GPUMD frames.
+#   lmp -in in.q6_rerun -var d <run dir> -var rc <0.854 a(T)>
+units      metal
+atom_style atomic
+boundary   p p p
+read_data  ${d}/frame0.data
+pair_style zero 6.0
+pair_coeff * *
+compute    q6 all orientorder/atom degrees 1 6 components 6 nnn 12 cutoff ${rc}
+compute    nb all coord/atom orientorder q6 0.5
+variable   issol atom c_nb>=7
+compute    ns all reduce sum v_issol
+thermo_style custom step c_ns
+thermo     1
+rerun      ${d}/prod.dump dump x y z box yes

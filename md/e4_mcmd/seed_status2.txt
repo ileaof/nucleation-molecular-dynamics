@@ -1,0 +1,9 @@
+alloy R=20 T=840 exit=0 642 s; a(T) = 4.0689 Å; seed 1956 at.; liquid 53115 at. (Cu 557); MC shell 7494 at.; box [99.54 99.54 99.54]
+alloy R=20 T=860 exit=0 696 s; a(T) = 4.0694 Å; seed 1956 at.; liquid 53127 at. (Cu 561); MC shell 7470 at.; box [99.62 99.62 99.62]
+alloy R=20 T=880 exit=0 700 s; a(T) = 4.0768 Å; seed 1956 at.; liquid 53135 at. (Cu 590); MC shell 7452 at.; box [99.71 99.71 99.71]
+DONE alloy R=20
+pure R=20 T=850 exit=0 515 s; a(T) = 4.0720 Å; seed 1956 at.; liquid 53124 at. (Cu 0); MC shell 7443 at.; box [99.78 99.78 99.78]
+pure R=20 T=870 exit=0 520 s; a(T) = 4.0694 Å; seed 1956 at.; liquid 53129 at. (Cu 0); MC shell 7395 at.; box [99.85 99.85 99.85]
+pure R=20 T=890 exit=0 524 s; a(T) = 4.0783 Å; seed 1956 at.; liquid 53147 at. (Cu 0); MC shell 7393 at.; box [99.95 99.95 99.95]
+DONE pure R=20
+QUEUE2 DONE

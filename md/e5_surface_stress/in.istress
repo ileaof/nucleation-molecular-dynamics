@@ -1,0 +1,70 @@
+# Solid–liquid interface stress Σ_αβ of Al (Borovikov 2024) and its strain derivatives (Gurtin–Murdoch σ0, μ0, λ0).
+# Slab: fcc [001] || z, solid lower half + liquid upper half, two (100) interfaces; lateral box at the stress-free
+# lattice of the solid at T, then an in-plane strain (ex, ey) of the whole box; production NPT along z only (P_zz = 0).
+#   lmp -sf gpu -pk gpu 1 -in in.istress -var T 936 -var ex 0.0 -var ey 0.0 -var seed 1
+# Outputs: global stress (thermo) and the z profile of the per-atom stress (prof_<tag>.txt, 2 Å bins), density and fcc
+# fraction per bin; Σ per interface = (1/2)∫[σ_αα(z) − σ_αα,bulk(z)]dz, σ_zz uniform (mechanical equilibrium).
+variable pot   index borovikov
+variable T     index 936
+variable ex    index 0.0
+variable ey    index 0.0
+variable seed  index 1
+variable n     index 10
+variable nz    index 40
+variable neq   index 10000          # 20 ps per preparation stage
+variable nprod index 500000         # 1 ns
+variable tag   index T${T}_ex${ex}_ey${ey}_s${seed}
+variable a0 equal 4.016
+
+units        metal
+atom_style   atomic
+boundary     p p p
+lattice      fcc ${a0}
+region       box block 0 ${n} 0 ${n} 0 ${nz}
+create_box   1 box
+create_atoms 1 box
+mass         1 26.982
+include      ../e2_melting/pot_${pot}.lmp
+timestep     0.002
+thermo       2000
+
+# 1) stress-free solid at T (lateral lattice of the solid is kept from here on)
+velocity     all create ${T} $(100+v_seed) mom yes rot yes dist gaussian
+fix          eq all npt temp ${T} ${T} 0.2 aniso 0.0 0.0 2.0
+run          ${neq}
+unfix        eq
+# 2) melt the upper half with the lower half frozen; 3) liquid back to T (nvt on the liquid group only)
+variable     zmid equal (zlo+zhi)/2
+region       up block INF INF INF INF ${zmid} INF units box
+group        liq region up
+group        sol subtract all liq
+velocity     sol set 0 0 0
+fix          freeze sol setforce 0 0 0
+fix          melt liq nvt temp 1500 1500 0.2
+run          ${neq}
+unfix        melt
+fix          cool liq nvt temp ${T} ${T} 0.2
+run          ${neq}
+unfix        cool
+unfix        freeze
+velocity     sol create ${T} $(200+v_seed) mom yes rot yes dist gaussian
+fix          relax all npt temp ${T} ${T} 0.2 z 0.0 0.0 2.0
+run          ${neq}
+unfix        relax
+# 4) in-plane strain of the whole box (solid strained, liquid follows), short relaxation along z
+change_box   all x scale $(1.0+v_ex) y scale $(1.0+v_ey) remap units box
+fix          relax2 all npt temp ${T} ${T} 0.2 z 0.0 0.0 2.0
+run          $(v_neq/2)
+unfix        relax2
+# 5) production: NPT along z only, stress profiles (sampled every 100 steps: CNA/stress every 10 steps cut the speed 5x)
+reset_timestep 0
+compute      sa all stress/atom NULL
+compute      cna all cna/atom $(0.854*v_a0*1.02)
+variable     isfcc atom c_cna==1
+compute      cz all chunk/atom bin/1d z lower 2.0 units box
+fix          prof all ave/chunk 100 500 50000 cz density/number c_sa[1] c_sa[2] c_sa[3] v_isfcc norm sample ave running file prof_${tag}.txt
+fix          prod all npt temp ${T} ${T} 0.2 z 0.0 0.0 2.0
+variable     lz equal lz
+fix          avg all ave/time 100 500 50000 v_lz c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] ave running file glob_${tag}.txt
+thermo_style custom step temp pe press pxx pyy pzz lx ly lz
+run          ${nprod}

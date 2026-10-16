@@ -121,7 +121,50 @@ Saídas grandes em `~/runs/e4_nemd/<tag>` (WSL); `run_nemd.sh "R T0 G seed" …`
 Parcial (R = 20 Å, T₀ = 809 K, G = 0,24 K/Å = 2,4e9 K/m): (∇T)_z local na interface 1,66 ± 0,32 e 2,05 ± 0,32 ×10⁹ K/m
 (70–85 % do imposto); T_quente − T_fria na interface +5,3 K; controles G = 0: (∇T)_z = −0,2 ± 0,7 e +0,7 ± 0,6. A 809 K uma
 réplicas: a 809 K crescem 2/3 com G = 0 e 2/3 com G = 2,4e9 K/m; a 829 K (2) e 849 K (1) com gradiente fundem →
-T*(G = 2,4e9) ≈ T*(0) = 809 K dentro de ~±10 K. (∇T)_z local (3 réplicas, 809 K) 1,44–2,05 ×10⁹ K/m; A·(∇T)_z = 0,87–1,10 ×10⁻⁷ m·K
+T*(G = 2,4e9) ≈ T*(0) = 809 K dentro de ~±10 K.
+**2ª série (2026-10-07, G = 4,8e9 e T₀ a cada 10 K; `md/e4_nemd/nemd_summary.md`, `summarize_nemd.py`):**
+T*(0) = 813,1 K; T*(2,4e9) = 815,8 K; T*(4,8e9) = 819,0 K → o gradiente desloca T* (+6 K), mas ΔT*·r_c/2 = 1,22 / 1,25 / 1,17 ×10⁻⁷
+m·K (constante). (a) A·(∇T)_z local = 0,10 / 0,97 / 1,79 ×10⁻⁷ (cruza ΔT·r_c/2 perto de 3e9 K/m; não vale a ∇T = 0);
+(b) deslocamento de ΔT·r_c/2 ≈ 0 ≠ A·(∇T)_z. T_quente − T_fria na interface 10–16 K com 4,8e9. Sem nucleação espontânea (sólido fora ~80–100 át.).
+**Confronto SDAS contínuo × MD (`scripts/plot_md_vs_continuum.py` → `results/figures/fig_sdas_confronto_md_continuo.png`):**
+Γ_MD = 1,17–1,25 ×10⁻⁷ m·K (7 estimativas) no mesmo MRB/cinética/solutos: SDAS_MD/SDAS_contínuo = 0,78 (Γ¹ˢᵗ) e 0,63 (Γ²ⁿᵈ)
+no Al-Cu-Nb-Fe (MD: 6,08·t^0,373 μm, 88 % dentro das barras); 0,69 e 0,59 no Al-Si-Mg-Fe (4,02·t^0,385, 12 %).
+**Autor (2026-10-07): RB representa o diagrama de fases (equilíbrio, β = 1, k₀); MRB representa o diagrama deslocado pela
+difusão finita, calculada pela redistribuição de soluto β (0 < β < 1, k_ef). β = 1 alavanca, β = 0 Scheil.**
+**E4 MCMD (`md/e4_mcmd/`, em andamento):** dar à MD difusão infinita (diagrama de fases, β = 1) com MD + Monte Carlo SGC/VCSGC
+(GPUMD + NEP89, Al-Cu): calibrar Δμ ↔ x_Cu, T_L e k por coexistência, seeding com soluto equilibrado → Γ_∞; comparar
+Γ_∞/Γ_puro com β̄^(−1/3). NEP89 Al-Cu: ΔH_f θ-Al₂Cu −0,105 eV/át (COST507 −0,164); Cu substitucional −0,34 eV/Cu
+(COST507 −0,23…−0,26); COST507 Al-3Cu: T_L 925,6 K, k 0,097, T_S 862,5 K (`scripts/calphad_alcu_ref.py`).
+GPUMD SGC: custo de Al→Cu = ΔE + μ_Cu − μ_Al (μ_Al = 0, μ_Cu = Δμ).
+**Resultado MCMD (2026-10-07):** Δμ = 1,013 eV → Al-3 wt% Cu no líquido; k = x_s/x_l ≈ 0,41 (COST507 0,097);
+T_L = 914,3 K (coexistência SGC 905–920 K; Al puro NEP89 919 K). Seeding R = 20 Å (GPUMD, inserção de esfera em líquido e
+sólido pré-equilibrados, MC numa casca R + 12 Å): Al puro T* = 840,4 K, r_c = 2,18 nm, ΔT = 78,6 K → Γ = 8,58e-8 m·K;
+Al-3Cu β = 1 T* = 837,2 K, r_c = 2,14 nm, ΔT = 77,1 K → Γ = 8,25e-8 m·K. **Γ_∞/Γ_puro = 0,96 (±~10 %): a difusão infinita do
+soluto não muda Γ no NEP89; a previsão β̄^(−1/3) ≈ 2 não aparece.** SDAS (`fig_sdas_mcmd_md_continuo.png`): MRB com Γ_MD(β = 1)
+5,62·t^0,371 / 3,72·t^0,384 (56 % / 0 % nas barras); RB com Γ_MD(β = 1) 11,75·t^0,333 / 10,11·t^0,333 (88 % / 0 %).
+Ressalvas: k do NEP89 4× fraco, só Cu (sem Nb/Fe/Si/Mg), um raio, colchetes de 20–40 K. Trajetórias apagadas após a análise.
+**Autor (2026-10-09): β é um parâmetro difusional** (retrodifusão do soluto no sólido, Fo = D_S·t_SL/(λ/2)²). Leitura:
+Γ (termodinâmico, equilíbrio do núcleo) e β (difusional) são independentes — o Γ da MD foi o mesmo com β ≈ 0 (MD de 100 ps,
+Fo ~ 1e-6) e β = 1 (MC). A MD não alcança a escala de tempo de β (ns × t_SL ~ 10–300 s); β̄^(−1/3) traz essa difusão ao SDAS.
+Caminho para a MD contribuir em β: calcular D_L e D_S dos solutos (no lugar das Arrhenius da literatura nos scripts de SDAS).
+**D_L do Cu no Al líquido (NEP89, `md/e4_diffusion/nep89/`, 2026-10-09):** Al-3 wt% Cu, 16 384 át., MSD por espécie, 900–1200 K:
+D_Cu = 0,88–0,93 × o do script; Arrhenius MD D0 = 9,38e-8 m²/s, Q = 23 855 J/mol (script 1,06e-7, 24 000). Al: D0 = 7,87e-8,
+Q = 21 212. SDAS Al-3Cu-5Nb-0,1Fe com o D_L da MD muda ≤ 2 % (MRB Γ¹ˢᵗ 7,54·t^0,376; RB 26,76·t^0,333): D_L não é a alavanca.
+Próximo: D_S (sólido, vacâncias; NEB com NEP89), que controla β pelo número de Fourier. Cuidado: compute_msd com Nc/intervalo
+grande é ~100× mais lento (usar 100 200, não 10 2000).
+**Gap MD × contínuo (2026-10-07, autor):** RB = equilíbrio (β = 1, difusão infinita no sólido), MRB = difusão finita (0 < β < 1);
+β = 0 é Scheil. Hipótese do autor: a MD (Al puro, sem soluto, 100 ps) ignora a redistribuição de soluto β. Testes:
+gap RB contínuo/RB MD = × 2,06 / × 2,35 = (Γ²ⁿᵈ/Γ_MD)^(1/3) (só Γ; mesmos D_L, k₀); aplicado à MRB da MD passa do ponto.
+Γ_MD/β̄ (β ignorado por inteiro) também passa. O Γ necessário pela MRB segue Γ_MD·β̄^(−n) com n = 0,514 (Al-Cu-Nb-Fe) e 0,491
+(Al-Si-Mg-Fe) → com n = ½ autoconsistente (`gamma_beta_corrected`): SDAS_MD = 8,73·t^0,349 e 6,32·t^0,359 μm, 100 % dentro das
+barras, viés ≈ 0 nas duas ligas; Γ_eff = 3,4–4,8e-7 e 6,2–8,9e-7 m·K (≈ Γ¹ˢᵗ do contínuo). n = ½ foi ajustado nas mesmas duas ligas
+(1 parâmetro comum): é calibração, falta justificativa física. **Autor: a teoria prevê n = 1/3** → sem parâmetro ajustado: SDAS_MD = 7,61·t^0,358 e
+5,32·t^0,369 μm, 100 % dentro das barras nas duas ligas, viés −0,09 / −0,12 (Γ_eff = 2,3–2,8e-7 e 3,3–4,2e-7 m·K).
+Leitura do autor: a RB da MD mostra difusão finita quando deveria mostrar infinita (RB_MD = 1,15 / 1,41 × MRB contínuo Γ²ⁿᵈ;
+0,49 / 0,43 × RB contínuo; β_ef = Γ_MD/Γ²ⁿᵈ = 0,114 / 0,077). Observação: M ∝ Γ_MD·√β̄ é a média geométrica entre RB (β = 1) e MRB (β̄).
+D_self do Al líquido na MD (MSD, `md/e4_diffusion`): 2,0 / 2,5 / 3,7 ×10⁻⁹ m²/s a 813 / 851 / 936 K (mesma ordem dos D_L do script, exceto Nb).
+Figuras: `fig_sdas_gap_md_continuo.png`, `fig_sdas_beta_md_continuo.png`, `fig_gap_gamma_gradT.png`.
+Também `fig_sdas_md_continuum.png` (com RB) e `fig_gamma_md_continuum.png` (γ_SL × r: contínuo 0,2–1,9 J/m² em μm; MD 0,104–0,111 em nm). (∇T)_z local (3 réplicas, 809 K) 1,44–2,05 ×10⁹ K/m; A·(∇T)_z = 0,87–1,10 ×10⁻⁷ m·K
 contra ΔT·r/2 = 1,18–1,40 ×10⁻⁷ (r fora do crítico). Próximo: G = 0,48 K/Å e passos de T menores perto de T*. Ruído do ∇T local em janelas de 10 ps
 ~1–3e9 K/m por componente: usar médias sobre janelas/réplicas e a projeção (∇T)_z, não |∇T|.
 Armadilhas: fundir/resfriar a P = 0 com o núcleo congelado (`fix npt liq … dilate liq` + `fix_modify temp`); com volume fixo o

@@ -1,0 +1,208 @@
+
+***************************************************************
+*                 Welcome to use GPUMD                        *
+*     (Graphics Processing Units Molecular Dynamics)          *
+*                     version 5.9                             *
+*              This is the gpumd executable                   *
+***************************************************************
+
+
+---------------------------------------------------------------
+Compiling options:
+---------------------------------------------------------------
+
+DEBUG is off: Use different PRNG seeds for different runs.
+
+---------------------------------------------------------------
+GPU information:
+---------------------------------------------------------------
+
+number of GPUs = 1
+Device id:                   0
+    Device name:             NVIDIA GeForce RTX 4050 Laptop GPU
+    Compute capability:      8.9
+    Amount of global memory: 5.99658 GB
+    Number of SMs:           20
+
+---------------------------------------------------------------
+Started running GPUMD.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Started initializing positions and related parameters.
+---------------------------------------------------------------
+
+Number of atoms is 55124.
+Use periodic boundary conditions along x.
+Use periodic boundary conditions along y.
+Use periodic boundary conditions along z.
+Box matrix h = [a, b, c] is
+    9.9397313500e+01    0.0000000000e+00    0.0000000000e+00
+    0.0000000000e+00    9.9397313500e+01    0.0000000000e+00
+    0.0000000000e+00    0.0000000000e+00    9.9397313500e+01
+Inverse box matrix g = inv(h) is
+    1.0060634083e-02    0.0000000000e+00    0.0000000000e+00
+    0.0000000000e+00    1.0060634083e-02    0.0000000000e+00
+    0.0000000000e+00    0.0000000000e+00    1.0060634083e-02
+Do not specify initial velocities here.
+Have 2 grouping method(s).
+Active atom types for this simulation:
+    type 0 = Al.
+    type 1 = Cu.
+    Atom type indices in run.in refer to the active atom types above.
+There are 2 groups of atoms in grouping method 0.
+    2016 atoms in group 0.
+    53108 atoms in group 1.
+There are 2 groups of atoms in grouping method 1.
+    7556 atoms in group 0.
+    47568 atoms in group 1.
+There are 2 atom types.
+    54652 atoms of type 0.
+    472 atoms of type 1.
+Initialized velocities with default T = 300 K.
+
+---------------------------------------------------------------
+Finished initializing positions and related parameters.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Started executing the commands in run.in.
+---------------------------------------------------------------
+
+Use the NEP4 potential with 2 atom types.
+    type 0 (Al with Z = 13).
+    type 1 (Cu with Z = 29).
+    has the universal ZBL with inner cutoff 1 A and outer cutoff 2 A.
+    radial cutoff = 6 A.
+    angular cutoff = 5 A.
+    MN_radial = 274.
+    enlarged MN_radial = 343.
+    enlarged MN_angular = 198.
+    n_max_radial = 4.
+    n_max_angular = 4.
+    basis_size_radial = 8.
+    basis_size_angular = 8.
+    l_max_3body = 4.
+    has_q_222 = 2.
+    has_q_1111 = 1.
+    has_q_112 = 0.
+    has_q_123 = 0.
+    has_q_233 = 0.
+    has_q_134 = 0.
+    ANN = 35-80-1.
+    number of neural network parameters = 5921.
+    number of descriptor parameters = 360.
+    total number of parameters = 6281.
+Initialized velocities with input T = 800 K.
+Time step for this run is 2 fs.
+Group 0 in grouping method 0 will be fixed.
+Use NVT ensemble for this run.
+    choose the Bussi-Donadio-Parrinello method.
+    initial temperature is 800 K.
+    final temperature is 800 K.
+    tau_T is 100 time_step.
+Dump thermo every 1000 steps.
+Run 2500 steps.
+    250 steps completed.
+    500 steps completed.
+    750 steps completed.
+    1000 steps completed.
+    1250 steps completed.
+    1500 steps completed.
+    1750 steps completed.
+    2000 steps completed.
+    2250 steps completed.
+    2500 steps completed.
+
+---------------------------------------------------------------
+Time used for this run = 50.4219 second.
+Speed of this run = 2.73314e+06 atom*step/second.
+---------------------------------------------------------------
+
+Use Nose-Hoover thermostat and Parrinello-Rahman barostat.
+Use NPT ensemble for this run.
+Thermostat: t_start is 800.000000, t_stop is 800.000000, t_period is 100.000000 timesteps
+xx : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+xy will not be changed.
+xz will not be changed.
+yx will not be changed.
+yy : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+yz will not be changed.
+zx will not be changed.
+zy will not be changed.
+zz : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+Perform SGC MCMD:
+    after every 100 MD steps, do 500 MC trials.
+    with an initial temperature of 800 K and a final temperature of 800 K.
+    number of species involved in SGC/VCSGC = 2.
+        species = Al, mu/phi= 0
+        species = Cu, mu/phi= 1.013
+    only for atoms in group 0 of grouping method 1.
+    the initial system or specified group has:
+        7505 Al atoms.
+        51 Cu atoms.
+    Use the NEP4 potential with 2 atom types.
+        type 0 (Al with Z = 13).
+        type 1 (Cu with Z = 29).
+    has the universal ZBL with inner cutoff 1 A and outer cutoff 2 A.
+    radial cutoff = 6 A.
+    angular cutoff = 5 A.
+    MN_radial = 274.
+    MN_angular = 158.
+    enlarged MN_radial = 343.
+    enlarged MN_angular = 198.
+        n_max_radial = 4.
+        n_max_angular = 4.
+        basis_size_radial = 8.
+        basis_size_angular = 8.
+    l_max_3body = 4.
+    has_q_222 = 2.
+    has_q_1111 = 1.
+    has_q_112 = 0.
+    has_q_123 = 0.
+    has_q_233 = 0.
+    has_q_134 = 0.
+        ANN = 35-80-1.
+        number of neural network parameters = 5921.
+        number of descriptor parameters = 360.
+        total number of parameters = 6281.
+Dump thermo every 1000 steps.
+Dump extended XYZ.
+    every 1000 steps.
+    into file prod.xyz.
+    for the whole system.
+Run 30000 steps.
+MTTK initializing...
+    3000 steps completed.
+    6000 steps completed.
+    9000 steps completed.
+    12000 steps completed.
+    15000 steps completed.
+    18000 steps completed.
+    21000 steps completed.
+    24000 steps completed.
+    27000 steps completed.
+    30000 steps completed.
+
+---------------------------------------------------------------
+Time used for this run = 1073.53 second.
+Speed of this run = 1.54045e+06 atom*step/second.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Finished executing the commands in run.in.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Time used = 1125.069421 s.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Finished running GPUMD.
+---------------------------------------------------------------
+

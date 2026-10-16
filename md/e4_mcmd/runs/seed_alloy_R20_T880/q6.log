@@ -1,0 +1,86 @@
+LAMMPS (10 Sep 2025)
+  using 1 OpenMP thread(s) per MPI task
+# Solid atoms (ten Wolde: q6·q6 > 0.5 with the 12 nearest neighbours, >= 7 such bonds) in GPUMD frames.
+#   lmp -in in.q6_rerun -var d <run dir> -var rc <0.854 a(T)>
+units      metal
+atom_style atomic
+boundary   p p p
+read_data  ${d}/frame0.data
+read_data  runs/seed_alloy_R20_T880/frame0.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (99.512655 99.512655 99.512655)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  55091 atoms
+  read_data CPU = 1.148 seconds
+pair_style zero 6.0
+pair_coeff * *
+compute    q6 all orientorder/atom degrees 1 6 components 6 nnn 12 cutoff ${rc}
+compute    q6 all orientorder/atom degrees 1 6 components 6 nnn 12 cutoff 3.48157012
+compute    nb all coord/atom orientorder q6 0.5
+variable   issol atom c_nb>=7
+compute    ns all reduce sum v_issol
+thermo_style custom step c_ns
+thermo     1
+rerun      ${d}/prod.dump dump x y z box yes
+rerun      runs/seed_alloy_R20_T880/prod.dump dump x y z box yes
+WARNING: No fixes with time integration, atoms won't move
+For more information see https://docs.lammps.org/err0028 (src/lammps-10Sep2025/src/verlet.cpp:60)
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8
+  ghost atom cutoff = 8
+  binsize = 4, bins = 25 25 25
+  3 neighbor lists, perpetual/occasional/extra = 1 2 0
+  (1) pair zero, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+  (2) compute orientorder/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+  (3) compute coord/atom, occasional
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 34.68 | 34.68 | 34.68 Mbytes
+   Step          c_ns     
+         0   2164         
+         1   2202         
+         2   2083         
+         3   1898         
+         4   1763         
+         5   1594         
+         6   1525         
+         7   1322         
+         8   1031         
+         9   835          
+        10   721          
+        11   529          
+        12   459          
+        13   283          
+        14   287          
+        15   109          
+        16   26           
+        17   2            
+        18   10           
+        19   1            
+        20   8            
+        21   14           
+        22   3            
+        23   7            
+        24   11           
+        25   6            
+        26   4            
+        27   3            
+        28   5            
+        29   3            
+Loop time of 40.9642 on 1 procs for 30 steps with 55091 atoms
+
+Total wall time: 0:00:42

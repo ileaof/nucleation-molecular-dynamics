@@ -116,7 +116,7 @@ def main(run, TM=936.0, T0=None):
             dz = q[:, 2] - c[2]
             geo.append(dict(N=len(p) / fs, c=c, zlo=np.percentile(-dz, 98), zhi=np.percentile(dz, 98),
                             rxy=np.percentile(np.hypot(q[:, 0] - c[0], q[:, 1] - c[1]), 98),
-                            b=(gy[2, 2] - (gy[0, 0] + gy[1, 1]) / 2) / Rg2, L=L))
+                            b=(gy[2, 2] - (gy[0, 0] + gy[1, 1]) / 2) / Rg2, L=L, nout=(len(d) - len(p)) / fs))
         if not geo:
             out.append(dict(step=step, N=0)); continue
         N = np.mean([g["N"] for g in geo]); c = np.mean([g["c"] for g in geo], 0); L = geo[0]["L"]
@@ -140,7 +140,8 @@ def main(run, TM=936.0, T0=None):
         out.append(dict(step=step, N=N, r=r / 10, zc=c[2], zlo=np.mean([g_["zlo"] for g_ in geo]),
                         zhi=np.mean([g_["zhi"] for g_ in geo]), rxy=np.mean([g_["rxy"] for g_ in geo]),
                         b=np.mean([g_["b"] for g_ in geo]), Ts=Ts, Tcold=Tcold, Thot=Thot, gloc=g * 1e10,
-                        gfar=gfar * 1e10, dT=dT, Gam=dT * r * 1e-10 / 2, AgradT=Ar * np.linalg.norm(g) * 1e10))
+                        gfar=gfar * 1e10, dT=dT, Gam=dT * r * 1e-10 / 2, AgradT=Ar * np.linalg.norm(g) * 1e10,
+                        nout=max(g_["nout"] for g_ in geo)))
     print(f"# {run.name}: G imposto = {G} K/Å = {G*1e10:.2e} K/m, T0 = {T0}, T_m = {TM}, f_s = {fs:.3f}\n")
     print("| t [ps] | N_cr | r_eq [nm] | z_c [Å] | ext. fria/quente/lateral [Å] | b | T_int [K] | T fria/quente [K] "
           "| ∇T local (x,y,z) [10⁹ K/m] | ∇T far [10⁹ K/m] | ΔT [K] | ΔT·r/2 [m·K] | A·|∇T| [m·K] |")
@@ -165,11 +166,11 @@ def main(run, TM=936.0, T0=None):
                     dzdt=np.polyfit(t, [o["zc"] for o in ok], 1)[0], gm=gm, ge=ge,
                     gam=np.mean([o["Gam"] for o in ok]), Agz=Agz.mean(), Agz_e=Agz.std(ddof=1) / np.sqrt(len(Agz)),
                     r=np.mean([o["r"] for o in ok]), dT=np.mean([o["dT"] for o in ok]),
-                    dTside=np.mean([o["Thot"] - o["Tcold"] for o in ok]))
+                    dTside=np.mean([o["Thot"] - o["Tcold"] for o in ok]), nout=max(o["nout"] for o in ok))
         print(f"\nRESUMO | {run.name} | G = {G*1e10:.2e} K/m | dN/dt = {summ['dNdt']:+.1f} át/ps | dz_c/dt = {summ['dzdt']:+.3f} Å/ps"
               f" | <∇T local> = ({gm[0]:+.2f}±{ge[0]:.2f}, {gm[1]:+.2f}±{ge[1]:.2f}, {gm[2]:+.2f}±{ge[2]:.2f})·10⁹ K/m"
               f" | <ΔT·r/2> = {summ['gam']:.3e} | <A·(∇T)_z> = {summ['Agz']:.2e} ± {summ['Agz_e']:.1e} m·K"
-              f" | T_quente − T_fria = {summ['dTside']:+.1f} K")
+              f" | T_quente − T_fria = {summ['dTside']:+.1f} K | sólido fora do núcleo (máx) = {summ['nout']:.0f} át")
         return summ
 
 

@@ -1,0 +1,6 @@
+T=900 exit=0 866 s 16384 atoms, 212 Cu (x_Cu = 0.01294, target 0.01296)
+T=936.58 exit=0 866 s 16384 atoms, 212 Cu (x_Cu = 0.01294, target 0.01296)
+T=1000 exit=0 903 s 16384 atoms, 212 Cu (x_Cu = 0.01294, target 0.01296)
+T=1100 exit=0 799 s 16384 atoms, 212 Cu (x_Cu = 0.01294, target 0.01296)
+T=1200 exit=0 832 s 16384 atoms, 212 Cu (x_Cu = 0.01294, target 0.01296)
+DONE

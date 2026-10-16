@@ -1,0 +1,12 @@
+potential /mnt/c/Users/ileao/OneDrive/Documentos/Nucleation_MD_GPU/potentials/NEP89_20250409/nep89_20250409.txt
+velocity 830
+time_step 2
+fix 0
+ensemble nvt_bdp 830 830 100
+dump_thermo 1000
+run 2500
+ensemble npt_mttk temp 830 830 iso 0 0 tperiod 100 pperiod 1000
+
+dump_thermo 1000
+dump_xyz 1000 prod.xyz
+run 30000

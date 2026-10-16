@@ -14,3 +14,11 @@ md/**/*.restart
 # Office lock / temp files
 ~$*
 *.tmp
+
+# regenerable GPUMD/LAMMPS configurations of the E4 runs (scripts rebuild them)
+md/e4_mcmd/runs/**/model.xyz
+md/e4_mcmd/runs/**/frame0.data
+md/e4_mcmd/runs/**/final.xyz
+md/e4_mcmd/runs/**/neighbor.out
+md/e4_diffusion/nep89/dl_T*/model.xyz
+md/e4_diffusion/nep89/dl_T*/neighbor.out

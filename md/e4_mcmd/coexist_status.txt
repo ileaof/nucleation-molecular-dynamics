@@ -1,0 +1,9 @@
+T=905 gpumd exit=0 2442 s
+T=905 cna exit=0
+T=910 gpumd exit=0 2456 s
+T=910 cna exit=0
+T=915 gpumd exit=0 2602 s
+T=915 cna exit=0
+T=920 gpumd exit=0 2516 s
+T=920 cna exit=0
+DONE

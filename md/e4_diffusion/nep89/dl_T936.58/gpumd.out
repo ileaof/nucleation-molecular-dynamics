@@ -1,0 +1,206 @@
+
+***************************************************************
+*                 Welcome to use GPUMD                        *
+*     (Graphics Processing Units Molecular Dynamics)          *
+*                     version 5.9                             *
+*              This is the gpumd executable                   *
+***************************************************************
+
+
+---------------------------------------------------------------
+Compiling options:
+---------------------------------------------------------------
+
+DEBUG is off: Use different PRNG seeds for different runs.
+
+---------------------------------------------------------------
+GPU information:
+---------------------------------------------------------------
+
+number of GPUs = 1
+Device id:                   0
+    Device name:             NVIDIA GeForce RTX 4050 Laptop GPU
+    Compute capability:      8.9
+    Amount of global memory: 5.99658 GB
+    Number of SMs:           20
+
+---------------------------------------------------------------
+Started running GPUMD.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Started initializing positions and related parameters.
+---------------------------------------------------------------
+
+Number of atoms is 16384.
+Use periodic boundary conditions along x.
+Use periodic boundary conditions along y.
+Use periodic boundary conditions along z.
+Box matrix h = [a, b, c] is
+    6.4800000000e+01    0.0000000000e+00    0.0000000000e+00
+    0.0000000000e+00    6.4800000000e+01    0.0000000000e+00
+    0.0000000000e+00    0.0000000000e+00    6.4800000000e+01
+Inverse box matrix g = inv(h) is
+    1.5432098765e-02    0.0000000000e+00    0.0000000000e+00
+    0.0000000000e+00    1.5432098765e-02    0.0000000000e+00
+    0.0000000000e+00    0.0000000000e+00    1.5432098765e-02
+Do not specify initial velocities here.
+Have 1 grouping method(s).
+Active atom types for this simulation:
+    type 0 = Al.
+    type 1 = Cu.
+    Atom type indices in run.in refer to the active atom types above.
+There are 2 groups of atoms in grouping method 0.
+    16172 atoms in group 0.
+    212 atoms in group 1.
+There are 2 atom types.
+    16172 atoms of type 0.
+    212 atoms of type 1.
+Initialized velocities with default T = 300 K.
+
+---------------------------------------------------------------
+Finished initializing positions and related parameters.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Started executing the commands in run.in.
+---------------------------------------------------------------
+
+Use the NEP4 potential with 2 atom types.
+    type 0 (Al with Z = 13).
+    type 1 (Cu with Z = 29).
+    has the universal ZBL with inner cutoff 1 A and outer cutoff 2 A.
+    radial cutoff = 6 A.
+    angular cutoff = 5 A.
+    MN_radial = 274.
+    enlarged MN_radial = 343.
+    enlarged MN_angular = 198.
+    n_max_radial = 4.
+    n_max_angular = 4.
+    basis_size_radial = 8.
+    basis_size_angular = 8.
+    l_max_3body = 4.
+    has_q_222 = 2.
+    has_q_1111 = 1.
+    has_q_112 = 0.
+    has_q_123 = 0.
+    has_q_233 = 0.
+    has_q_134 = 0.
+    ANN = 35-80-1.
+    number of neural network parameters = 5921.
+    number of descriptor parameters = 360.
+    total number of parameters = 6281.
+Initialized velocities with input T = 1700 K.
+Time step for this run is 2 fs.
+Use Nose-Hoover thermostat and Parrinello-Rahman barostat.
+Use NPT ensemble for this run.
+Thermostat: t_start is 1700.000000, t_stop is 1700.000000, t_period is 100.000000 timesteps
+xx : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+xy will not be changed.
+xz will not be changed.
+yx will not be changed.
+yy : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+yz will not be changed.
+zx will not be changed.
+zy will not be changed.
+zz : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+Run 5000 steps.
+MTTK initializing...
+    500 steps completed.
+    1000 steps completed.
+    1500 steps completed.
+    2000 steps completed.
+    2500 steps completed.
+    3000 steps completed.
+    3500 steps completed.
+    4000 steps completed.
+    4500 steps completed.
+    5000 steps completed.
+
+---------------------------------------------------------------
+Time used for this run = 14.297 second.
+Speed of this run = 5.72987e+06 atom*step/second.
+---------------------------------------------------------------
+
+Use Nose-Hoover thermostat and Parrinello-Rahman barostat.
+Use NPT ensemble for this run.
+Thermostat: t_start is 936.580000, t_stop is 936.580000, t_period is 100.000000 timesteps
+xx : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+xy will not be changed.
+xz will not be changed.
+yx will not be changed.
+yy : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+yz will not be changed.
+zx will not be changed.
+zy will not be changed.
+zz : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+Run 10000 steps.
+MTTK initializing...
+    1000 steps completed.
+    2000 steps completed.
+    3000 steps completed.
+    4000 steps completed.
+    5000 steps completed.
+    6000 steps completed.
+    7000 steps completed.
+    8000 steps completed.
+    9000 steps completed.
+    10000 steps completed.
+
+---------------------------------------------------------------
+Time used for this run = 34.5767 second.
+Speed of this run = 4.73846e+06 atom*step/second.
+---------------------------------------------------------------
+
+Use Nose-Hoover thermostat and Parrinello-Rahman barostat.
+Use NPT ensemble for this run.
+Thermostat: t_start is 936.580000, t_stop is 936.580000, t_period is 100.000000 timesteps
+xx : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+xy will not be changed.
+xz will not be changed.
+yx will not be changed.
+yy : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+yz will not be changed.
+zx will not be changed.
+zy will not be changed.
+zz : p_start is 0.000000, p_stop is 0.000000, p_period is 1000.000000 timesteps
+Compute mean square displacement (MSD).
+    sample interval is 100.
+    number of correlation steps is 200.
+    will compute MSD for all groups in grouping 0.
+Dump thermo every 1000 steps.
+Run 100000 steps.
+MTTK initializing...
+    10000 steps completed.
+    20000 steps completed.
+    30000 steps completed.
+    40000 steps completed.
+    50000 steps completed.
+    60000 steps completed.
+    70000 steps completed.
+    80000 steps completed.
+    90000 steps completed.
+    100000 steps completed.
+
+---------------------------------------------------------------
+Time used for this run = 814.685 second.
+Speed of this run = 2.01108e+06 atom*step/second.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Finished executing the commands in run.in.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Time used = 864.648115 s.
+---------------------------------------------------------------
+
+
+---------------------------------------------------------------
+Finished running GPUMD.
+---------------------------------------------------------------
+

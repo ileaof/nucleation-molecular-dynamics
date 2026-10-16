@@ -1,0 +1,8 @@
+solid T=905 dmu=0.95 exit=0 414 s
+liquid T=905 dmu=0.95 exit=0 419 s
+solid T=905 dmu=1.0 exit=0 414 s
+liquid T=905 dmu=1.0 exit=0 415 s
+solid T=905 dmu=1.05 exit=0 408 s
+liquid T=905 dmu=1.05 exit=0 413 s
+solid T=905 dmu=1.1 exit=0 408 s
+liquid T=905 dmu=1.1 exit=0 414 s
